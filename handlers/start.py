@@ -4,4 +4,5 @@ from keyboards import kb_menu
 
 @dp.message_handler(commands=['start'])
 async def mes_start(message: Message):
-    await message.answer('И тебе привет, выбери help или цифру', reply_markup=kb_menu)
+    user_id = message.from_user.id
+    await message.answer(f'И тебе привет, твой id {user_id}. Передай его администратору для дальнейшей работы с ботом', reply_markup=kb_menu)

@@ -1,6 +1,7 @@
 from .main_menu import kb_menu
-from .main_menu import kb_help
-from .main_menu import kb_digit
+from .kb_cancel_fsm import kb_cancel_fsm
+from .change_role import kb_role_user
 
 
-__all__ = ['kb_menu', 'kb_help', 'kb_digit']
+
+__all__ = ['kb_menu', 'kb_cancel_fsm', 'kb_role_user']
