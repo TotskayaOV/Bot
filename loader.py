@@ -18,6 +18,7 @@ async def on_startup(_):
     try:
         db.create_table_com_applications()
         db.create_table_user_access()
+        db.create_table_dump_agent()
         print('DataBase...ok!')
     except sqlite3.OperationalError:
         print('DataBase .... фиг вам, а не датабаза')

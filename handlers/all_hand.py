@@ -1,9 +1,7 @@
-from loader import dp
+from loader import dp, db
 from aiogram.types import Message
+from working import cheking_workbase
 
-@dp.message_handler()
-async def mes_all(message: Message):
-    if message.text.isdigit():
-        await message.answer(f'{message.from_user.first_name} Гляди! Цифра! - {message.text}')
-    else:
-        await message.answer(f'{message.from_user.first_name} Гляди! Буква! - {message.text}')
+@dp.message_handler(commands=['remove'])
+async def mes_start(message: Message):
+    cheking_workbase()

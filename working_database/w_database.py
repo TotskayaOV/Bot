@@ -36,6 +36,13 @@ class DataBase:
         user_id INTEGER, name TEXT, user_role TEXT)'''
         self.execute(sql, commit=True)
 
+    def create_table_dump_agent(self):
+        sql = '''CREATE TABLE IF NOT EXISTS dump_agent 
+        (id INTEGER PRIMARY KEY AUTOINCREMENT,
+        agent_name TEXT, phone_number INTEGER, inn_number INTEGER, 
+        company_name TEXT, date_up DATETIME, row_number INTEGER, comment TEXT)'''
+        self.execute(sql, commit=True)
+
     def add_com_applications(self, com_applications: dict):
         parameters = (com_applications.get('agent_name'), com_applications.get('phone_number'), com_applications.get('inn_number'),
                       com_applications.get('company_name'))
@@ -49,6 +56,13 @@ class DataBase:
         VALUES (?, ?, ?)'''
         self.execute(sql, parameters, commit=True)
 
+    def add_dump_agent(self, dump_agent: dict):
+        parameters = (dump_agent.get('agent_name'), dump_agent.get('phone_number'), dump_agent.get('inn_number'),
+                      dump_agent.get('company_name'), dump_agent.get('date_up'), dump_agent.get('row_number'), dump_agent.get('comment'))
+        sql = '''INSERT INTO dump_agent (agent_name, phone_number, inn_number, company_name, date_up, row_number, comment)
+        VALUES (?, ?, ?, ?, ?, ?, ?)'''
+        self.execute(sql, parameters, commit=True)
+
     def get_com_applications(self, **kwargs):
         sql = '''SELECT * FROM com_applications WHERE '''
         sql, parameters = self.extract_kwargs(sql, kwargs)
@@ -59,9 +73,19 @@ class DataBase:
         sql, parameters = self.extract_kwargs(sql, kwargs)
         return self.execute(sql, parameters, fetchall=True)
 
+    def get_dump_agent(self, **kwargs):
+        sql = '''SELECT * FROM dump_agent WHERE '''
+        sql, parameters = self.extract_kwargs(sql, kwargs)
+        return self.execute(sql, parameters, fetchall=True)
+
     def remove_user(self, id_user: int):
         parameters = (id_user,)
         sql = '''DELETE FROM user_access WHERE user_id=?'''
+        self.execute(sql, parameters, commit=True)
+
+    def remove_dump_agent(self, inn_number: int):
+        parameters = (inn_number,)
+        sql = '''DELETE FROM dump_agent WHERE inn_number=?'''
         self.execute(sql, parameters, commit=True)
 
 

@@ -37,6 +37,7 @@ async def name_catch(message: Message, state: FSMContext):
     if message.text in ['admin', 'coordinator', 'divisional_mentor']:
         await state.update_data({'user_role': message.text})
         data = await state.get_data()
+        print(data)
         try:
             db.add_user_access(data)
             await message.answer(f"Пользователь {data.get('name')} в роли {data.get('user_role')} успешно добавлен")

@@ -1,5 +1,4 @@
-from search import numbers_IM, numbers_Yg, numbers_Lk
-from gs_table import values_IM, values_Yg, values_Lk
+# from working.search_executor import values_IM, values_Yg, values_Lk
 
 # Формирует словарь с данными для карточки агента
 def writing_data(num_agent: int, num_string: int, gsheet_value: dict):
@@ -13,7 +12,7 @@ def writing_data(num_agent: int, num_string: int, gsheet_value: dict):
             role = agent_list[10]
         data = {
             'agent_name': agent_list[1],
-            'phone number':  agent_list[2],
+            'phone_number':  agent_list[2],
             'inn_number': agent_list[4],
             'role': role,
             'company_name': 'Изилоджистик'
@@ -28,7 +27,7 @@ def writing_data(num_agent: int, num_string: int, gsheet_value: dict):
             role = agent_list[7]
         data = {
             'agent_name': agent_list[1],
-            'phone number': agent_list[2],
+            'phone_number': agent_list[2],
             'inn_number': agent_list[4],
             'role': role,
             'company_name': 'Я го'
@@ -43,13 +42,13 @@ def writing_data(num_agent: int, num_string: int, gsheet_value: dict):
             role = agent_list[11]
         data = {
             'agent_name': agent_list[1],
-            'phone number': agent_list[3],
+            'phone_number': agent_list[3],
             'inn_number': agent_list[5],
             'role': role,
             'company_name': 'Л Карго'
         }
     return data
 
-print(writing_data(2, numbers_Yg[0], values_Yg))
-print(writing_data(1, numbers_IM[0], values_IM))
-print(writing_data(3, numbers_Lk[0], values_Lk))
+# print(writing_data(2, 2, values_Yg))
+# print(writing_data(1, 2, values_IM))
+# print(writing_data(3, 2, values_Lk))
