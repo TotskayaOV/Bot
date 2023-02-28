@@ -4,4 +4,4 @@ from working import cheking_workbase
 
 @dp.message_handler(commands=['remove'])
 async def mes_start(message: Message):
-    cheking_workbase()
+    await cheking_workbase()

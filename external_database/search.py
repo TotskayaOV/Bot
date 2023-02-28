@@ -5,11 +5,3 @@ def column_comparison(table_dict: dict):
             if 'Может работать' in item and ('Не хватает данных') not in item:
                 numbers_list.append(i + 1)
     return (numbers_list)
-
-
-# numbers_IM = column_comparison(values_IM)
-# numbers_Yg = column_comparison(values_Yg)
-# numbers_Lk = column_comparison(values_Lk)
-# print(f'пациент в строке {numbers_IM}')
-# print(f'пациент в строке {numbers_Yg}')
-# print(f'пациент в строке {numbers_Lk}')

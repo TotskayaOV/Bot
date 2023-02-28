@@ -15,10 +15,10 @@ credentials = ServiceAccountCredentials.from_json_keyfile_name(
         'https://www.googleapis.com/auth/drive'])
 httpAuth = credentials.authorize(httplib2.Http())
 service = apiclient.discovery.build('sheets', 'v4', http = httpAuth)
+
+
 def google_search():
-
-
-# Чтение из таблицы (IM - ИзиМСК, Yg - Яго):
+# Чтение из таблицы (IM - ИЗИ МСК, Yg - Яго, Lk - Л Карго (1 лист - Мск), LkSpb - Л Карго (2 лист - Спб):
     values_IM = service.spreadsheets().values().get(
         spreadsheetId=spreadsheet_id1,
         range='A1:K5',
@@ -31,30 +31,49 @@ def google_search():
     ).execute()
     values_Lk = service.spreadsheets().values().get(
         spreadsheetId=spreadsheet_id3,
-        range='A1:L',
+        range="A1:L",
+        majorDimension='ROWS'
+    ).execute()
+    values_LkSpb = service.spreadsheets().values().get(
+        spreadsheetId=spreadsheet_id3,
+        # worksheets= 'Л Карго (СПБ)',
+        range="'Л Карго (СПБ)'!A1:L",
         majorDimension='ROWS'
     ).execute()
     result_dict = {}
-    result_dict['ИЗИМСК'] = values_IM
+    result_dict['ИЗИ МСК'] = values_IM
     result_dict['ЯГО'] = values_Yg
-    result_dict['ЛКАРГО'] = values_Lk
+    result_dict['Л КАРГО Мск'] = values_Lk
     return result_dict
-# {'ИЗИМСК': {}, 'ЯГО': {}, 'ЛКАРГО': {}}
+# {'ИЗИ МСК': {}, 'ЯГО': {}, 'Л КАРГО Мск': {}}
 
 
-def writing_status(row_num: str):
+def writing_status(row_num: str, comp_num: int):
+    print(row_num)
+    print(comp_num)
+    match comp_num:
+        case 1:
+            spreadsheetIdFunc = spreadsheet_id1
+            litera = "J"
+        case 2:
+            spreadsheetIdFunc = spreadsheet_id2
+            litera = "J"
+        case 3:
+            spreadsheetIdFunc = spreadsheet_id3
+            litera = "K"
     values = service.spreadsheets().values().batchUpdate(
-        spreadsheetId=spreadsheet_id2,
+        spreadsheetId=spreadsheetIdFunc,
         body={
             "valueInputOption": "USER_ENTERED",
             "data": [
-                {"range": row_num,
+                {"range": litera+row_num,
                  "majorDimension": "ROWS",
                  "values": [["Активирован"]]}
             ]
         }
     ).execute()
-    print('Done')
+
+# writing_status(3, '3')
 
 # def status_change(index_num: int, speedsheet_id: str):
 #     index_num = 5
