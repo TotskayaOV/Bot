@@ -68,9 +68,17 @@ class DataBase:
 
     def add_dump_agent(self, dump_agent: dict):
         parameters = (dump_agent.get('agent_name'), dump_agent.get('phone_number'), dump_agent.get('inn_number'),
-                      dump_agent.get('company_name'), dump_agent.get('date_up'), dump_agent.get('row_number'), dump_agent.get('comment'))
+                      dump_agent.get('company_name'), dump_agent.get('date_up'), dump_agent.get('row_number'),
+                      dump_agent.get('comment'))
         sql = '''INSERT INTO dump_agent (agent_name, phone_number, inn_number, company_name, date_up, row_number, comment)
         VALUES (?, ?, ?, ?, ?, ?, ?)'''
+        self.execute(sql, parameters, commit=True)
+
+
+    def update_dump_comm(self, dump_agent: dict):
+        parameters = (dump_agent.get('agent_name'), dump_agent.get('phone_number'), dump_agent.get('inn_number'),
+                      dump_agent.get('comment'), dump_agent.get('id'))
+        sql = '''UPDATE dump_agent SET agent_name=?, phone_number=?, inn_number=?, comment=? WHERE id=? '''
         self.execute(sql, parameters, commit=True)
 
 

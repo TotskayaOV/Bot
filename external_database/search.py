@@ -1,4 +1,4 @@
-def column_comparison(table_dict: dict):
+def column_comparison(table_dict: dict) -> list[int]:
     numbers_list = []
     for i, item in enumerate(table_dict.get('values')):
         if 'Может работать' in item and not ('Активирован') in item and i != 0:

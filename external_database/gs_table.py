@@ -7,7 +7,9 @@ from oauth2client.service_account import ServiceAccountCredentials
 CREDENTIALS_FILE = 'external_database/cbt.json'
 spreadsheet_id1 = '1ammlfHCNNYwT7TEMyilZxcAEsDUgA4VWcGfjAnEhL2g'    #ИзиМск - 1
 spreadsheet_id2 = '12CVgah0l3YuD7s5P_hj6NyWZxO45GlN0XlWuRbvxo_E'    #Яго - 2
-spreadsheet_id3 = '1qCzJA60FJnf0BN0vFnkgIazCejhLW-k8wg3BUSaLZek'    #Л-Карго -3
+spreadsheet_id3 = '1qCzJA60FJnf0BN0vFnkgIazCejhLW-k8wg3BUSaLZek'    #Л-Карго (Мск и СПБ) -3, 4
+spreadsheet_id5 = '1VyHAZ7hBIL170DJ4HkTHKVYKoKNx-AncVywj5NxPsIU'    #ИзиСПб - 5
+spreadsheet_id6 = '1vCKUOM1Q3fFAT8itHq58sPmzNuKGc58v9aVusIQ2BdQ'    #ИзиКазань - 6
 
 credentials = ServiceAccountCredentials.from_json_keyfile_name(
         CREDENTIALS_FILE,
@@ -21,7 +23,7 @@ def google_search():
 # Чтение из таблицы (IM - ИЗИ МСК, Yg - Яго, Lk - Л Карго (1 лист - Мск), LkSpb - Л Карго (2 лист - Спб):
     values_IM = service.spreadsheets().values().get(
         spreadsheetId=spreadsheet_id1,
-        range='A1:K5',
+        range='A1:K',
         majorDimension='ROWS'
     ).execute()
     values_Yg = service.spreadsheets().values().get(
@@ -37,20 +39,72 @@ def google_search():
     values_LkSpb = service.spreadsheets().values().get(
         spreadsheetId=spreadsheet_id3,
         # worksheets= 'Л Карго (СПБ)',
-        range="'Л Карго (СПБ)'!A1:L",
+        range="'Л Карго (СПБ)'!A1:K",
+        majorDimension='ROWS'
+    ).execute()
+    values_IS = service.spreadsheets().values().get(
+        spreadsheetId=spreadsheet_id5,
+        range='A1:K',
+        majorDimension='ROWS'
+    ).execute()
+    values_IK = service.spreadsheets().values().get(
+        spreadsheetId=spreadsheet_id6,
+        range='A1:K',
         majorDimension='ROWS'
     ).execute()
     result_dict = {}
     result_dict['ИЗИ МСК'] = values_IM
     result_dict['ЯГО'] = values_Yg
     result_dict['Л КАРГО Мск'] = values_Lk
+    result_dict['Л КАРГО Спб'] = values_LkSpb
+    result_dict['ИЗИ СПб'] = values_IS
+    result_dict['ИЗИ Казань'] = values_IK
     return result_dict
-# {'ИЗИ МСК': {}, 'ЯГО': {}, 'Л КАРГО Мск': {}}
+# {'ИЗИ МСК': {}, 'ЯГО': {}, 'Л КАРГО Мск': {}, 'Л КАРГО Спб': {}, 'ИЗИ СПб': {}}
+
+def google_update(row_num: str, comp_num: int):
+    """
+    match case определяет по номеру компании какой GooGlesheet ID использовать и в каком диапозоне производить поиск.
+    переменная litera собирает нужный диапозон столбцов и номер строки в одну строку.
+    :param row_num: номер строки
+    :param comp_num: номер компании:
+                        1. Изилоджистик Мск
+                        2. Я го
+                        3. Л Карго Мск
+                        4. Л Карго СПб
+                        5. Изилоджистик СПб
+                        6. Изилоджистик Казань
+    :return:
+    """
+    match comp_num:
+        case 1:
+            spreadsheetIdFunc = spreadsheet_id1
+            litera = "A" + str(row_num) + ":" + "J" + str(row_num)
+        case 2:
+            spreadsheetIdFunc = spreadsheet_id2
+            litera = "A" + str(row_num) + ":" + "J" + str(row_num)
+        case 3:
+            spreadsheetIdFunc = spreadsheet_id3
+            litera = "A" + str(row_num) + ":" + "K" + str(row_num)
+        case 4:
+            spreadsheetIdFunc = spreadsheet_id3
+            litera = "'Л Карго (СПБ)'!A" + str(row_num) + ":" + "K" + str(row_num)
+        case 5:
+            spreadsheetIdFunc = spreadsheet_id5
+            litera = "A" + str(row_num) + ":" + "J" + str(row_num)
+        case 6:
+            spreadsheetIdFunc = spreadsheet_id6
+            litera = "A" + str(row_num) + ":" + "J" + str(row_num)
+
+    values = service.spreadsheets().values().get(
+        spreadsheetId=spreadsheetIdFunc,
+        range=litera,
+        majorDimension='ROWS'
+    ).execute()
+    return values
 
 
 def writing_status(row_num: str, comp_num: int):
-    print(row_num)
-    print(comp_num)
     match comp_num:
         case 1:
             spreadsheetIdFunc = spreadsheet_id1
@@ -61,6 +115,15 @@ def writing_status(row_num: str, comp_num: int):
         case 3:
             spreadsheetIdFunc = spreadsheet_id3
             litera = "K"
+        case 4:
+            spreadsheetIdFunc = spreadsheet_id3
+            litera = "'Л Карго (СПБ)'!J"
+        case 5:
+            spreadsheetIdFunc = spreadsheet_id5
+            litera = "J"
+        case 6:
+            spreadsheetIdFunc = spreadsheet_id6
+            litera = "J"
     values = service.spreadsheets().values().batchUpdate(
         spreadsheetId=spreadsheetIdFunc,
         body={
@@ -72,6 +135,78 @@ def writing_status(row_num: str, comp_num: int):
             ]
         }
     ).execute()
+
+def writing_cancel_status(row_num: str, comp_num: int):
+    match comp_num:
+        case 1:
+            spreadsheetIdFunc = spreadsheet_id1
+            litera = "D"
+        case 2:
+            spreadsheetIdFunc = spreadsheet_id2
+            litera = "D"
+        case 3:
+            spreadsheetIdFunc = spreadsheet_id3
+            litera = "E"
+        case 4:
+            spreadsheetIdFunc = spreadsheet_id3
+            litera = "'Л Карго (СПБ)'!D"
+        case 5:
+            spreadsheetIdFunc = spreadsheet_id5
+            litera = "D"
+        case 6:
+            spreadsheetIdFunc = spreadsheet_id6
+            litera = "D"
+    values = service.spreadsheets().values().batchUpdate(
+        spreadsheetId=spreadsheetIdFunc,
+        body={
+            "valueInputOption": "USER_ENTERED",
+            "data": [
+                {"range": litera+row_num,
+                 "majorDimension": "ROWS",
+                 "values": [[""]]}
+            ]
+        }
+    ).execute()
+
+def writing_jira_status(row_num: str, comp_num: int):
+    """
+    Проставляет статус агенту в Googlesheet "Не хватает данных"
+    :param row_num: номер строки (str)
+    :param comp_num: номер таблицы (int)
+    :return:
+    """
+    match comp_num:
+        case 1:
+            spreadsheetIdFunc = spreadsheet_id1
+            litera = "J"+row_num
+        case 2:
+            spreadsheetIdFunc = spreadsheet_id2
+            litera = "J"+row_num
+        case 3:
+            spreadsheetIdFunc = spreadsheet_id3
+            litera = "K"+row_num
+        case 4:
+            spreadsheetIdFunc = spreadsheet_id3
+            litera = "'Л Карго (СПБ)'!J"+row_num
+        case 5:
+            spreadsheetIdFunc = spreadsheet_id5
+            litera = "J"+row_num
+        case 6:
+            spreadsheetIdFunc = spreadsheet_id6
+            litera = "J"+row_num
+    values = service.spreadsheets().values().batchUpdate(
+        spreadsheetId=spreadsheetIdFunc,
+        body={
+            "valueInputOption": "USER_ENTERED",
+            "data": [
+                {"range": litera,
+                 "majorDimension": "ROWS",
+                 "values": [["Не хватает данных"]]}
+            ]
+        }
+    ).execute()
+
+
 
 # writing_status(3, '3')
 

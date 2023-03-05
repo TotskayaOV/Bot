@@ -9,4 +9,4 @@ from loader import dp
 async def com_start(message: Message, state: FSMContext):
     await state.reset_state()
     await state.finish()
-    await message.answer(text='Выход из режима ввода данных.', reply_markup=ReplyKeyboardRemove())
+    await message.answer(text='🆗 Выход из режима ввода данных.', reply_markup=ReplyKeyboardRemove())
