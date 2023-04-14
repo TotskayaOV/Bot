@@ -9,6 +9,7 @@ from working import add_new_comment
 async def error_phone_agent(callback: CallbackQuery, message=None):
     print("Done")
     message = callback.message
+    user_id = callback.from_user.id
     string_callback = callback.message.text
     my_list = string_callback.split('\n')
     temp_dict = {}
@@ -18,11 +19,12 @@ async def error_phone_agent(callback: CallbackQuery, message=None):
     data['inn_number'] = temp_dict.get('ИНН')
     data['comment'] = 'ошибка в номере ИНН'
     print(data)
-    await add_new_comment(data)
+    await add_new_comment(data, user_id)
 
 @dp.callback_query_handler(other_company.filter(verif='error_phone_data'))
 async def error_inn_agent(callback: CallbackQuery, message=None):
     print("Done")
+    user_id = callback.from_user.id
     message = callback.message
     string_callback = callback.message.text
     my_list = string_callback.split('\n')
@@ -33,4 +35,4 @@ async def error_inn_agent(callback: CallbackQuery, message=None):
     data['inn_number'] = temp_dict.get('ИНН')
     data['comment'] = 'ошибка в номере телефона'
     print(data)
-    await add_new_comment(data)
+    await add_new_comment(data, user_id)

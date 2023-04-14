@@ -21,11 +21,14 @@ def writing_data(num_agent: int, num_string: int, gsheet_value: dict):
         }
     elif num_agent == 2:
         agent_list = gsheet_value.get('values')[num_string - 1]
+        print(agent_list)
         role = ''
-        if len(agent_list) < 8:
+        if len(agent_list) < 8 or agent_list[7] == '':
             role = 'Универсал'
         else:
             role = agent_list[7]
+        if len(agent_list) < 5:
+            agent_list.append('')
         data = {
             'agent_name': agent_list[1],
             'phone_number': agent_list[2],
@@ -72,10 +75,12 @@ def rewriting_data(num_agent: int, num_string: int, gsheet_value: dict):
     elif num_agent == 2:
         agent_list = gsheet_value.get('values')[0]
         role = ''
-        if agent_list[7] == '':
+        if len(agent_list) < 8 or agent_list[7] == '':
             role = 'Универсал'
         else:
             role = agent_list[7]
+        if len(agent_list) < 5:
+            agent_list.append('')
         data = {
             'agent_name': agent_list[1],
             'phone_number': agent_list[2],

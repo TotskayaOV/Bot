@@ -212,8 +212,8 @@ def writing_pivot_table(all_data: tuple):
     Данные приходят в виде кортежа кортежей
     (id INTEGER PRIMARY KEY AUTOINCREMENT,
         agent_name TEXT, phone_number INTEGER, inn_number INTEGER,
-        company_name TEXT, date_up DATETIME, date_down DATETIME, comment TEXT)'
-    litera_list = ['A', 'B', 'C', 'D', 'E', 'F', 'G']
+        company_name TEXT, date_up DATETIME, date_down DATETIME, comment TEXT, last_user INTEGER)'
+    litera_list = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']
     :param all_data: данные из БД (tuple)
     :return:
     """
@@ -221,7 +221,7 @@ def writing_pivot_table(all_data: tuple):
     values_data = []
     for i in range(len(all_data)):
         values_data.append(list(all_data[i][1:]))
-    range_data = "A2:G" + str(len(all_data)+1)
+    range_data = "A2:H" + str(len(all_data)+1)
     values = service.spreadsheets().values().batchUpdate(
     spreadsheetId=spreadsheetIdFunc,
     body={

@@ -30,7 +30,7 @@ class DataBase:
         sql = '''CREATE TABLE IF NOT EXISTS com_applications 
         (id INTEGER PRIMARY KEY AUTOINCREMENT,
         agent_name TEXT, phone_number INTEGER, inn_number INTEGER, 
-        company_name TEXT, date_up DATETIME, date_down DATETIME, comment TEXT)'''
+        company_name TEXT, date_up DATETIME, date_down DATETIME, comment TEXT, last_user INTEGER)'''
         self.execute(sql, commit=True)
 
     def create_table_user_access(self):
@@ -52,10 +52,10 @@ class DataBase:
         parameters = (com_applications.get('agent_name'), com_applications.get('phone_number'),
                       com_applications.get('inn_number'), com_applications.get('company_name'),
                       com_applications.get('date_up'), com_applications.get('date_down'),
-                      com_applications.get('comment'))
+                      com_applications.get('comment'), com_applications.get('last_user'))
         sql = '''INSERT INTO com_applications (agent_name, phone_number, inn_number, company_name, 
-        date_up, date_down, comment) 
-        VALUES (?, ?, ?, ?, ?, ?, ?)'''
+        date_up, date_down, comment, last_user) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)'''
         self.execute(sql, parameters, commit=True)
 
 
@@ -90,6 +90,14 @@ class DataBase:
 
     def get_all_com_applications(self):
         sql = '''SELECT * FROM com_applications'''
+        return self.execute(sql, fetchall=True)
+
+    def get_all_user_access(self):
+        sql = '''SELECT * FROM user_access'''
+        return self.execute(sql, fetchall=True)
+
+    def get_all_dump_agent(self):
+        sql = '''SELECT * FROM dump_agent'''
         return self.execute(sql, fetchall=True)
 
 

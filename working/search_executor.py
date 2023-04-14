@@ -1,68 +1,8 @@
 from external_database import *
-import datetime
 from asyncio import sleep
-from loader import db, dp
-from keyboards import kb_coord_inline
-from keyboards import kb_div_nd_inline
+from loader import db
+from .comment_area import sent_div_list, sent_coor_list, send_to_dump
 
-
-
-def chat_text(data: dict):
-    """
-    Формирует строку для отправки сообщения
-    :param data: принимает словарь в котором должны содержаться ключи:agent_name, phone_number, inn_number, company_name
-    :return: строка (str)
-    """
-    text_mess = f"ФИО:{data.get('agent_name')}\nТелефон: {data.get('phone_number')}\n" \
-                f"ИНН:{data.get('inn_number')}\nКомпания: {data.get('company_name')}\n" \
-                f"Роль: {data.get('role')}"
-    return text_mess
-
-
-def send_to_dump(row_number: int, data: dict):
-    """
-    Формирует словарь для записи в ДБ (таблица агенты в работе - dump_agent)
-    :param row_number: номер строки в Google sheets
-    :param data: {'agent_name', 'phone_number', 'inn_number', 'company_name', 'date_up', 'row_number': row_number, 'comment'}
-    'date_up' - время исполения функции
-    """
-    dump_data = {'agent_name': data.get('agent_name'), 'phone_number': data.get('phone_number'),
-                 'inn_number': data.get('inn_number'), 'company_name': data.get('company_name'),
-                 'date_up': datetime.datetime.now(), 'row_number': row_number, 'comment': ''}
-    return dump_data
-
-
-async def sent_div_list(data, my_adminset):
-    """
-    Функция для отправки сообщения админам и ДН. Формирует список с id_user роль-дивизионный_менеджер и объединяет
-    его с my_adminset. Циклом for проходит по id_user общего списка и отправляет сообщение сформировав строку через
-    chat_text(). К сообщению прикрепляется инлайн клавиатура kb_div_nd_inline.
-    :param data: словарь {'agent_name': '', 'phone_number': '', 'inn_number': '', 'role': '', 'company_name': ''}
-    :param my_adminset: лист с id_user роль-админ
-    """
-    my_divset = db.get_user_access(user_role='divisional_mentor')
-    if my_divset:
-        my_adminset.extend(my_divset)
-    for y in range(len(my_adminset)):
-        chat_id = my_adminset[y][1]
-        text_mess = chat_text(data) + "\nНЕДОСТАТОЧНО ДАННЫХ"
-        await dp.bot.send_message(chat_id, text=text_mess, reply_markup=kb_div_nd_inline)
-
-async def sent_coor_list(data, my_adminset):
-    """
-    Функция для отправки сообщения админам и ДН. Формирует список с id_user роль-координатор и объединяет
-    его с my_adminset. Циклом for проходит по id_user общего списка и отправляет сообщение сформировав строку через
-    chat_text(). К сообщению прикрепляется инлайн клавиатура kb_coord_inline.
-    :param data: словарь {'agent_name': '', 'phone_number': '', 'inn_number': '', 'role': '', 'company_name': ''}
-    :param my_adminset: лист с id_user роль-админ
-    """
-    my_coorset = db.get_user_access(user_role='coordinator')
-    if my_coorset:
-        my_adminset.extend(my_coorset)
-    for y in range(len(my_adminset)):
-        chat_id = my_adminset[y][1]
-        text_mess = chat_text(data)
-        await dp.bot.send_message(chat_id, text=text_mess, reply_markup=kb_coord_inline)
 
 async def cheking_list(num_com: int, number_list: list, values: dict):
     """

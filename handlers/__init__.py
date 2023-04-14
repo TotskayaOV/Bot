@@ -7,7 +7,7 @@ from .cansel_agent import dp
 from .application_jira import dp
 from .update_agent_data import dp
 from .error_data import dp
-from .all_hand import dp
+
 
 
 __all__ = ['dp']

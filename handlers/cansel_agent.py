@@ -8,8 +8,9 @@ from working import div_cancel_agent
 @dp.callback_query_handler(cancel_agent_div.filter(cancel_agent='cancel_agent'))
 async def cansel_div_agent(callback: CallbackQuery):
     string_callback = callback.message.text
+    user_id = callback.from_user.id
     my_list = string_callback.split('\n')
-    agent_dict = {}
+    agent_dict = {'last_user': user_id}
     for i in range(len(my_list) - 1):
         agent_dict[my_list[i].split(':')[0]] = my_list[i].split(':')[1]
     div_cancel_agent(agent_dict)
@@ -17,8 +18,9 @@ async def cansel_div_agent(callback: CallbackQuery):
 @dp.callback_query_handler(application_jira.filter(jira='cancel_agent'))
 async def cansel_div_agent(callback: CallbackQuery):
     string_callback = callback.message.text
+    user_id = callback.from_user.id
     my_list = string_callback.split('\n')
-    agent_dict = {}
+    agent_dict = {'last_user': user_id}
     for i in range(len(my_list) - 1):
         agent_dict[my_list[i].split(':')[0]] = my_list[i].split(':')[1]
     div_cancel_agent(agent_dict)

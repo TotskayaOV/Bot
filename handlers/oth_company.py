@@ -28,8 +28,9 @@ async def inn_agent(callback: CallbackQuery, state: FSMContext, message=None):
 async def company_catch(message: Message, state: FSMContext):
     await state.update_data({'comment': f'сотрудничает с {message.text}'})
     data = await state.get_data()
+    user_id = message.from_user.id
     try:
-        await add_new_comment(data)
+        await add_new_comment(data, user_id)
     except:
         await message.answer(text='Данный партнер уже изменил свой статус 😎')
     await state.reset_data()
