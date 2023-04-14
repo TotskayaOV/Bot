@@ -1,5 +1,9 @@
-from loader import db, dp
-from keyboards import kb_div_inline
+import datetime
+
+from loader import db, dp, log_id
+from keyboards import kb_div_inline, kb_div_nd_inline
+from send_massage import notify
+
 
 
 async def add_new_comment(data: dict):
@@ -10,19 +14,27 @@ async def add_new_comment(data: dict):
     :param data: {'inn_number': '(ИНН)', 'comment': 'сотрудничает с (название компании)'}
     :return: dp.bot.send_message
     """
-    agent_data = db.get_dump_agent(inn_number=data.get('inn_number'))[0]
-    if agent_data[7] != '':
-        data['comment'] = agent_data[7] + ", " + data.get('comment')
-    db.add_dump_comm(data)
-    my_adminset = db.get_user_access(user_role='admin')
-    my_divset = db.get_user_access(user_role='divisional_mentor')
-    if my_divset:
-        my_adminset.extend(my_divset)
-    text_mess = f"ФИО: {agent_data[1]}\nТелефон: {agent_data[2]}\nИНН: {agent_data[3]}\n" \
-                f"Компания: {agent_data[4]}\n{data.get('comment')}"
-    for y in range(len(my_adminset)):
-        chat_id = my_adminset[y][1]
-        await dp.bot.send_message(chat_id, text=text_mess, reply_markup=kb_div_inline)
+    try:
+        agent_data = db.get_dump_agent(inn_number=data.get('inn_number'))[0]
+        if agent_data[7] != '':
+            data['comment'] = agent_data[7] + ", " + data.get('comment')
+        db.add_dump_comm(data)
+        my_adminset = db.get_user_access(user_role='admin')
+        my_divset = db.get_user_access(user_role='divisional_mentor')
+        if my_divset:
+            my_adminset.extend(my_divset)
+        text_mess = f"ФИО: {agent_data[1]}\nТелефон: {agent_data[2]}\nИНН: {agent_data[3]}\n" \
+                    f"Компания: {agent_data[4]}\n{data.get('comment')}"
+        for y in range(len(my_adminset)):
+            chat_id = my_adminset[y][1]
+            if data.get('comment').endswith('ошибка в номере телефона') \
+                    or data.get('comment').endswith('ошибка в номере ИНН'):
+                await dp.bot.send_message(chat_id, text=text_mess, reply_markup=kb_div_nd_inline)
+            else:
+                await dp.bot.send_message(chat_id, text=text_mess, reply_markup=kb_div_inline)
+    except Exception as err:
+        err = f"{err}\n{str(datetime.datetime.now())}\nнерезиденты - {data.get('inn_number')}"
+        notify(log_id, err)
 
 
 def update_agent_comment(data: set, new_data: dict):
@@ -33,6 +45,7 @@ def update_agent_comment(data: set, new_data: dict):
     :return:
     """
     comment = data[7]
+    print(comment)
     if comment == "": new_comment = 'данные обновлены'
     else: new_comment = comment + ', ' + 'данные обновлены'
     writing_dict = {'agent_name': new_data.get('agent_name'), 'phone_number': new_data.get('phone_number'),

@@ -88,6 +88,11 @@ class DataBase:
         self.execute(sql, parameters, commit=True)
 
 
+    def get_all_com_applications(self):
+        sql = '''SELECT * FROM com_applications'''
+        return self.execute(sql, fetchall=True)
+
+
     def get_com_applications(self, **kwargs):
         sql = '''SELECT * FROM com_applications WHERE '''
         sql, parameters = self.extract_kwargs(sql, kwargs)

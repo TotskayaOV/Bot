@@ -2,7 +2,7 @@ from loader import dp
 from aiogram.types import CallbackQuery, Message
 from aiogram.dispatcher.filters.state import StatesGroup, State
 from aiogram.dispatcher import FSMContext
-from keyboards import example_data
+from keyboards import other_company
 from keyboards import kb_cancel_fsm
 from working import add_new_comment
 class OtherCompany(StatesGroup):
@@ -10,7 +10,7 @@ class OtherCompany(StatesGroup):
     comment = State()
 
 # "text": "ФИО:Иванов Иван Иванович\nТелефон: 79163000079\nИНН:79199700600\nКомпания: Изилоджистик Мск"
-@dp.callback_query_handler(example_data.filter(move='banana'), state=None)
+@dp.callback_query_handler(other_company.filter(verif='banana'), state=None)
 async def inn_agent(callback: CallbackQuery, state: FSMContext, message=None):
     await OtherCompany.inn_number.set()
     message = callback.message

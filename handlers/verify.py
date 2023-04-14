@@ -1,11 +1,11 @@
 from loader import dp
 from aiogram.types import CallbackQuery
-from keyboards import example_data
+from keyboards import other_company
 from working import verification_agent
 
 
 # "text": "ФИО:Иванов Иван Иванович\nТелефон: 79163000079\nИНН:79199700600\nКомпания: Изилоджистик Мск"
-@dp.callback_query_handler(example_data.filter(move='verif'))
+@dp.callback_query_handler(other_company.filter(verif='verif'))
 async def verif_agent(callback: CallbackQuery):
     string_callback = callback.message.text
     my_list = string_callback.split('\n')

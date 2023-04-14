@@ -12,9 +12,20 @@ def call_admin(text_mess: str):
     """
     Отправляет простое сообщение пользователям с ролью admin через notify
     :param text_mess: текстовое сообщение (str)
-    :return:
     """
     my_adminset = db.get_user_access(user_role='admin')
+    for i in range(len(my_adminset)):
+        notify(my_adminset[i][1], text_mess)
+
+def call_coor(text_mess: str):
+    """
+    Отправляет простое сообщение пользователям с ролью admin и coordinator через notify
+    :param text_mess: текстовое сообщение (str)
+    """
+    my_adminset = db.get_user_access(user_role='admin')
+    my_coorset = db.get_user_access(user_role='coordinator')
+    if my_coorset:
+        my_adminset.extend(my_coorset)
     for i in range(len(my_adminset)):
         notify(my_adminset[i][1], text_mess)
 
@@ -22,7 +33,6 @@ def call_div(text_mess: str):
     """
     Отправляет простое сообщение пользователям с ролью admin и divisional_mentor через notify
     :param text_mess: текстовое сообщение (str)
-    :return:
     """
     my_adminset = db.get_user_access(user_role='admin')
     my_divset = db.get_user_access(user_role='divisional_mentor')
@@ -36,7 +46,8 @@ def sent_to_com_applications(agent_set: set):
     """
     :param agent_set: множество в виде (id, agent_name, phone_number, inn_number, company_name, date_up,
                     row_number, comment)
-    :return: dict
+    :return: dict: {'agent_name': str, 'phone_number': int, 'inn_number': int, 'company_name': str, 'date_up': str,
+    'date_down': str, 'comment': str}
     """
     data_dict = {'agent_name': agent_set[1], 'phone_number': agent_set[2], 'inn_number': agent_set[3],
                  'company_name': agent_set[4], 'date_up': agent_set[5], 'date_down': datetime.now(),
@@ -48,13 +59,22 @@ def sent_to_com_applications(agent_set: set):
 # Из кортежа получаем id в dump (для последующего удаления), через функцию sent_to_com_applications формируем словарь
 # для отправки в com_applications, получаем номер строки в которой нужно будет изменить статус
 def verification_agent(data: dict) -> object:
+    """
+    Ищет в рабочей ДБ агента по ИНН, получает кортеж, записывает в переменную info_from_dump в виде
+    (id, name, phone, inn, company, datatime up, №row, comment). Отправляет сообщение формируя строку в переменную
+    text_mes в call_coor(). Из info_from_dump получает id агента в рабочей БД и номер строки в Googlesheets.
+    Через sent_to_com_applications() формирует словарь для записи в БД выполненных заявок. Через id_агента удаляет
+    данные из рабочей БД. Через name_company_number получает номер компании.
+    Проставляет статус "Активирован" через writing_status()
+    text_wdb: {'agent_name': str, 'phone_number': int, 'inn_number': int, 'company_name': str, 'date_up': str,
+    'date_down': str, 'comment': str}
+    :param data: словарь {'ФИО': str, 'Телефон': str, 'ИНН': str, 'Компания': str}
+    :return:
+    """
     try:
-        if len(db.get_dump_agent(inn_number=data.get('ИНН'))) == 1:
-            info_from_dump = db.get_dump_agent(inn_number=data.get('ИНН'))[0]
-        else:
-            info_from_dump = db.get_dump_agent(phone_number=data.get('Телефон'))[0]
+        info_from_dump = db.get_dump_agent(inn_number=data.get('ИНН'))[0]
         text_mes = data.get('ФИО') + " " + data.get('Компания') + '\nверифицирован 🍌'
-        call_div(text_mes)
+        call_coor(text_mes)
         id_agent_dump = info_from_dump[0]
         text_wdb = sent_to_com_applications(info_from_dump)
         num_row = info_from_dump[6]
@@ -67,11 +87,12 @@ def verification_agent(data: dict) -> object:
 
 def div_cancel_agent(data: dict):
     try:
-        print(data)
-        info_from_dump = db.get_dump_agent(inn_number=data.get('ИНН'))[0]
+        try:
+            info_from_dump = db.get_dump_agent(inn_number=data.get('ИНН'))[0]
+        except:
+            info_from_dump = db.get_dump_agent(phone_number=data.get('Телефон'))[0]
         text_mes = data.get('ФИО') + " " + data.get('Компания') + '\nотказ от сотрудничества 💩'
         call_admin(text_mes)
-        print(text_mes)
         id_agent_dump = info_from_dump[0]
         text_wdb = sent_to_com_applications(info_from_dump)
         temp_variable = text_wdb.get('comment')
@@ -80,7 +101,6 @@ def div_cancel_agent(data: dict):
         db.add_com_applications(text_wdb)
         db.remove_dump_agent(id_agent_dump)
         num_table = name_company_number(text_wdb.get('company_name'))
-        print(num_table)
         writing_jira_status(str(num_row), num_table)
     except:
         call_div(f"Сотрудник {data.get('ФИО')} уже исключен из рабочих данных 🤫")

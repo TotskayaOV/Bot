@@ -12,6 +12,7 @@ memory = MemoryStorage()
 bot = Bot(os.getenv('TOKEN'))
 dp = Dispatcher(bot, storage=memory)
 db = DataBase(db_path=db_path)
+log_id = os.getenv('LOG_ID')
 
 async def on_startup(_):
     print('Bot started!')

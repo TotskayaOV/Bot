@@ -5,6 +5,7 @@ from oauth2client.service_account import ServiceAccountCredentials
 # Подключение API:
 
 CREDENTIALS_FILE = 'external_database/cbt.json'
+spreadsheet_id0 = '1aJV1szm0CnChInO79eWrnrnxt6jsjmuFQ3tIDcVtbtY'    #Сводная
 spreadsheet_id1 = '1ammlfHCNNYwT7TEMyilZxcAEsDUgA4VWcGfjAnEhL2g'    #ИзиМск - 1
 spreadsheet_id2 = '12CVgah0l3YuD7s5P_hj6NyWZxO45GlN0XlWuRbvxo_E'    #Яго - 2
 spreadsheet_id3 = '1qCzJA60FJnf0BN0vFnkgIazCejhLW-k8wg3BUSaLZek'    #Л-Карго (Мск и СПБ) -3, 4
@@ -206,7 +207,32 @@ def writing_jira_status(row_num: str, comp_num: int):
         }
     ).execute()
 
-
+def writing_pivot_table(all_data: tuple):
+    """
+    Данные приходят в виде кортежа кортежей
+    (id INTEGER PRIMARY KEY AUTOINCREMENT,
+        agent_name TEXT, phone_number INTEGER, inn_number INTEGER,
+        company_name TEXT, date_up DATETIME, date_down DATETIME, comment TEXT)'
+    litera_list = ['A', 'B', 'C', 'D', 'E', 'F', 'G']
+    :param all_data: данные из БД (tuple)
+    :return:
+    """
+    spreadsheetIdFunc = spreadsheet_id0
+    values_data = []
+    for i in range(len(all_data)):
+        values_data.append(list(all_data[i][1:]))
+    range_data = "A2:G" + str(len(all_data)+1)
+    values = service.spreadsheets().values().batchUpdate(
+    spreadsheetId=spreadsheetIdFunc,
+    body={
+        "valueInputOption": "USER_ENTERED",
+        "data": [
+            {"range": range_data,
+             "majorDimension": "ROWS",
+             "values": values_data}
+        ]
+    }
+    ).execute()
 
 # writing_status(3, '3')
 
