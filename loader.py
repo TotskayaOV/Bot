@@ -1,11 +1,12 @@
 import os
 import sqlite3
 
-from aiogram import Bot, Dispatcher, types
+from aiogram import Bot, Dispatcher
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 
 from working_database import DataBase
 from config import db_path
+from send_massage import notify
 
 memory = MemoryStorage()
 
@@ -14,16 +15,18 @@ dp = Dispatcher(bot, storage=memory)
 db = DataBase(db_path=db_path)
 log_id = os.getenv('LOG_ID')
 
+
 async def on_startup(_):
-    print('Bot started!')
+    notify(log_id, 'Bot started!')
     try:
         db.create_table_com_applications()
         db.create_table_user_access()
         db.create_table_dump_agent()
-        print('DataBase...ok!')
+        notify(log_id, 'DataBase...ok!')
     except sqlite3.OperationalError:
-        print('DataBase .... фиг вам, а не датабаза')
+        notify(log_id, 'DataBase .... фиг вам, а не датабаза')
 
-async  def on_shutdown(_):
+
+async def on_shutdown(_):
     db.disconnect()
 

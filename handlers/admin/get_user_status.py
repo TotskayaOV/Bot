@@ -1,6 +1,7 @@
 from aiogram.types import Message
 from loader import dp, db
 
+
 @dp.message_handler(commands=['show_users'])
 async def show_users(message: Message, admin: bool):
     if admin:

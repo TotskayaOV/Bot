@@ -5,5 +5,3 @@ other_company = CallbackData('Coords', 'verif')
 
 cancel_agent_div = CallbackData('Div1', 'cancel_agent')
 application_jira = CallbackData('Jira', 'jira')
-
-# role_callbk = CallbackData('First CB', 'user_role')

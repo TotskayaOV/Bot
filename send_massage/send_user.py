@@ -8,8 +8,7 @@ def notify(chat_id: int, text: str):
     :param chat_id: id пользователя/чата которому будет отправлено сообщение
     :param text: сообщение
     """
-    telegram_client = TelegramClient(token=os.getenv('TOKEN'),
-                                 base_url='https://api.telegram.org')
+    telegram_client = TelegramClient(token=os.getenv('TOKEN'), base_url='https://api.telegram.org')
     my_params = {"chat_id": chat_id, "text": text}
     telegram_client.post(method='sendMessage', params=my_params)
 

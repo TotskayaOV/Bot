@@ -9,9 +9,9 @@ class OtherCompany(StatesGroup):
     inn_number = State()
     comment = State()
 
-# "text": "ФИО:Иванов Иван Иванович\nТелефон: 79163000079\nИНН:79199700600\nКомпания: Изилоджистик Мск"
+
 @dp.callback_query_handler(other_company.filter(verif='banana'), state=None)
-async def inn_agent(callback: CallbackQuery, state: FSMContext, message=None):
+async def inn_agent(callback: CallbackQuery, state: FSMContext):
     await OtherCompany.inn_number.set()
     message = callback.message
     string_callback = callback.message.text
@@ -23,6 +23,7 @@ async def inn_agent(callback: CallbackQuery, state: FSMContext, message=None):
     await message.answer(text='Напишите название компании, в которой оказывает услуги агент',
                          reply_markup=kb_cancel_fsm)
     await OtherCompany.next()
+
 
 @dp.message_handler(state=OtherCompany.comment)
 async def company_catch(message: Message, state: FSMContext):

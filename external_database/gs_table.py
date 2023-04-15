@@ -13,15 +13,13 @@ spreadsheet_id5 = '1VyHAZ7hBIL170DJ4HkTHKVYKoKNx-AncVywj5NxPsIU'    #ИзиСП�
 spreadsheet_id6 = '1vCKUOM1Q3fFAT8itHq58sPmzNuKGc58v9aVusIQ2BdQ'    #ИзиКазань - 6
 
 credentials = ServiceAccountCredentials.from_json_keyfile_name(
-        CREDENTIALS_FILE,
-        ['https://www.googleapis.com/auth/spreadsheets',
-        'https://www.googleapis.com/auth/drive'])
+        CREDENTIALS_FILE, ['https://www.googleapis.com/auth/spreadsheets',
+         'https://www.googleapis.com/auth/drive'])
 httpAuth = credentials.authorize(httplib2.Http())
 service = apiclient.discovery.build('sheets', 'v4', http = httpAuth)
 
 
 def google_search():
-# Чтение из таблицы (IM - ИЗИ МСК, Yg - Яго, Lk - Л Карго (1 лист - Мск), LkSpb - Л Карго (2 лист - Спб):
     values_IM = service.spreadsheets().values().get(
         spreadsheetId=spreadsheet_id1,
         range='A1:K',
@@ -61,7 +59,7 @@ def google_search():
     result_dict['ИЗИ СПб'] = values_IS
     result_dict['ИЗИ Казань'] = values_IK
     return result_dict
-# {'ИЗИ МСК': {}, 'ЯГО': {}, 'Л КАРГО Мск': {}, 'Л КАРГО Спб': {}, 'ИЗИ СПб': {}}
+
 
 def google_update(row_num: str, comp_num: int):
     """
@@ -169,6 +167,7 @@ def writing_cancel_status(row_num: str, comp_num: int):
         }
     ).execute()
 
+
 def writing_jira_status(row_num: str, comp_num: int):
     """
     Проставляет статус агенту в Googlesheet "Не хватает данных"
@@ -207,6 +206,7 @@ def writing_jira_status(row_num: str, comp_num: int):
         }
     ).execute()
 
+
 def writing_pivot_table(all_data: tuple):
     """
     Данные приходят в виде кортежа кортежей
@@ -223,16 +223,17 @@ def writing_pivot_table(all_data: tuple):
         values_data.append(list(all_data[i][1:]))
     range_data = "A2:H" + str(len(all_data)+1)
     values = service.spreadsheets().values().batchUpdate(
-    spreadsheetId=spreadsheetIdFunc,
-    body={
-        "valueInputOption": "USER_ENTERED",
-        "data": [
-            {"range": range_data,
-             "majorDimension": "ROWS",
-             "values": values_data}
-        ]
-    }
+        spreadsheetId=spreadsheetIdFunc,
+        body={
+            "valueInputOption": "USER_ENTERED",
+            "data": [
+                {"range": range_data,
+                 "majorDimension": "ROWS",
+                 "values": values_data}
+            ]
+        }
     ).execute()
+
 
 # writing_status(3, '3')
 

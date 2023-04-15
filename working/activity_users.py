@@ -7,10 +7,7 @@ from .comment_area import update_agent_comment, call_admin, call_coor, call_div,
     sent_to_com_applications, overwriting_comment, chat_text
 
 
-# Получаем на вход данные типа dict: {'ФИО': 'Аннжелина Джоли', 'Телефон': ' 79333064959', 'ИНН': '972734238895', 'Компания': ' Л Карго Мск'}
-# Из кортежа получаем id в dump (для последующего удаления), через функцию sent_to_com_applications формируем словарь
-# для отправки в com_applications, получаем номер строки в которой нужно будет изменить статус
-def verification_agent(data: dict) -> object:
+def verification_agent(data: dict):
     """
     Ищет в рабочей ДБ агента по ИНН, получает кортеж, записывает в переменную info_from_dump в виде
     (id, name, phone, inn, company, datatime up, №row, comment). Отправляет сообщение формируя строку в переменную
@@ -34,10 +31,11 @@ def verification_agent(data: dict) -> object:
         db.add_com_applications(text_wdb)
         num_table = name_company_number(text_wdb.get('company_name'))
         writing_status(str(num_row), num_table)
-    except:
+    except Exception as err:
         notify(data.get('last_user'), 'Хватит тыкать!')
         notify(log_id, f"{db.get_user_access(user_id=data.get('last_user'))[0][2]} "
-                   f"затыкивает верифицированного: {data.get('ФИО')} 🤬")
+                       f"затыкивает верифицированного: {data.get('ФИО')} 🤬\n{err}")
+
 
 def div_cancel_agent(data: dict):
     try:
@@ -49,16 +47,15 @@ def div_cancel_agent(data: dict):
         call_div(text_mes)
         id_agent_dump = info_from_dump[0]
         text_wdb = sent_to_com_applications(info_from_dump, data.get('last_user'))
-        temp_variable = text_wdb.get('comment')
-        text_wdb['comment'] = temp_variable + ', отказ от сотрудничества'
+        text_wdb['comment'] = overwriting_comment(text_wdb.get('comment'), 'отказ от сотрудничества')
         num_row = info_from_dump[6]
         db.add_com_applications(text_wdb)
         db.remove_dump_agent(id_agent_dump)
         num_table = name_company_number(text_wdb.get('company_name'))
         writing_jira_status(str(num_row), num_table)
-    except:
+    except Exception as err:
         notify(data.get('last_user'), f"Сотрудник {data.get('ФИО')} уже исключен из рабочих данных 🤫")
-        notify(log_id, f"{data.get('last_user')} повторное нажатие кнопки {data.get('ФИО')}")
+        notify(log_id, f"{data.get('last_user')} повторное нажатие кнопки {data.get('ФИО')}\n{err}")
 
 
 def div_jira_agent(data: dict):
@@ -71,21 +68,21 @@ def div_jira_agent(data: dict):
         call_div(text_mes)
         id_agent_dump = info_from_dump[0]
         text_wdb = sent_to_com_applications(info_from_dump, data.get('last_user'))
-        print((text_wdb))
         text_wdb['comment'] = overwriting_comment(text_wdb.get('comment'), 'JIRA')
         num_row = info_from_dump[6]
         db.add_com_applications(text_wdb)
         db.remove_dump_agent(id_agent_dump)
         num_table = name_company_number(text_wdb.get('company_name'))
         writing_jira_status(str(num_row), num_table)
-    except:
+    except Exception as err:
         notify(data.get('last_user'), f"Сотрудник {data.get('ФИО')} уже исключен из рабочих данных 🤫")
-        notify(log_id, f"{data.get('last_user')} повторное нажатие кнопки {data.get('ФИО')}")
+        notify(log_id, f"{data.get('last_user')} повторное нажатие кнопки {data.get('ФИО')}\n{err}")
 
 
-async def div_update_agent(data: dict, last_user: int):
+async def div_update_agent(data: dict):
     """
 
+    :param last_user:
     :param data:
     :return:
     """
@@ -117,9 +114,9 @@ async def div_update_agent(data: dict, last_user: int):
                 chat_id = my_adminset[y][1]
                 text_mess = chat_text(value)
                 await dp.bot.send_message(chat_id, text=text_mess, reply_markup=kb_coord_inline)
-    except:
-        notify(last_user, f"Сотрудник уже исключен из рабочих данных 🤫")
-        notify(log_id, f"{last_user} повторное нажатие кнопки обновления данных")
+    except Exception as err:
+        notify(data.get('last_user'), f"Сотрудник уже исключен из рабочих данных 🤫")
+        notify(log_id, f"{data.get('last_user')} повторное нажатие кнопки обновления данных\n{err}")
 
 
 async def add_new_comment(data: dict, last_user: int):
@@ -127,12 +124,19 @@ async def add_new_comment(data: dict, last_user: int):
     Через add_dump_comm обновляет комментарий в БД агентов в работе. Формирует лист с id пользователей через
     get_user_access и циклом for перебирает их, отправляя сообщение с text_mess (формируется из agent_data от
     get_dump_agent, поиск по ИНН)
+    :param last_user:
     :param data: {'inn_number': '(ИНН)', 'comment': 'сотрудничает с (название компании)'}
     :return: dp.bot.send_message
     """
     try:
-        agent_data = db.get_dump_agent(inn_number=data.get('inn_number'))[0]
-        data['comment'] = overwriting_comment(agent_data[7], data.get('comment'))
+        if data.get('inn_number', False):
+            agent_data = db.get_dump_agent(inn_number=data.get('inn_number'))[0]
+            data['comment'] = overwriting_comment(agent_data[7], data.get('comment'))
+            db.add_dump_comm(data)
+        else:
+            agent_data = db.get_dump_agent(phone_number=data.get('phone_number'))[0]
+            data['comment'] = overwriting_comment(agent_data[7], data.get('comment'))
+            db.add_dump_comm_phone(data)
         db.add_dump_comm(data)
         my_adminset = db.get_user_access(user_role='admin')
         my_divset = db.get_user_access(user_role='divisional_mentor')
@@ -148,7 +152,7 @@ async def add_new_comment(data: dict, last_user: int):
             else:
                 await dp.bot.send_message(chat_id, text=text_mess, reply_markup=kb_div_inline)
         call_coor(f"ФИО: {agent_data[1]} отправлен на уточнение")
-    except:
+    except Exception as err:
         notify(last_user, f'Сотрудник с ИНН {data.get("inn_number")} отсутствует в работе')
         call_admin(f"{db.get_user_access(user_id=last_user)[0][2]} "
-                   f"пытается сломать бота через ИНН: {data.get('inn_number')} 🤬")
+                   f"пытается сломать бота через ИНН: {data.get('inn_number')} 🤬\n{err}")

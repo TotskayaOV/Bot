@@ -7,11 +7,15 @@ def writing_data(num_agent: int, num_string: int, gsheet_value: dict):
             case 4: company_name = 'Л Карго СПб'
             case 5: company_name = 'Изилоджистик СПб'
             case 6: company_name = 'Изилоджистик Казань'
-        role = ''
         if len(agent_list) < 11:
             role = 'Универсал'
         else:
             role = agent_list[10]
+        if len(agent_list) < 5:
+            count_append = 5 - len(agent_list)
+            while count_append <= 5:
+                agent_list.append('')
+                count_append += 1
         data = {
             'agent_name': agent_list[1],
             'phone_number':  agent_list[2],
@@ -21,28 +25,34 @@ def writing_data(num_agent: int, num_string: int, gsheet_value: dict):
         }
     elif num_agent == 2:
         agent_list = gsheet_value.get('values')[num_string - 1]
-        print(agent_list)
-        role = ''
         if len(agent_list) < 8 or agent_list[7] == '':
             role = 'Универсал'
         else:
             role = agent_list[7]
         if len(agent_list) < 5:
-            agent_list.append('')
+            count_append = 5 - len(agent_list)
+            while count_append <= 5:
+                agent_list.append('')
+                count_append += 1
         data = {
             'agent_name': agent_list[1],
             'phone_number': agent_list[2],
-            'inn_number': agent_list[4],
+            'inn_number':
+            agent_list[4],
             'role': role,
             'company_name': 'Я го'
         }
     elif num_agent == 3:
         agent_list = gsheet_value.get('values')[num_string - 1]
-        role = ''
         if len(agent_list) < 12:
             role = 'Универсал'
         else:
             role = agent_list[11]
+        if len(agent_list) < 5:
+            count_append = 5 - len(agent_list)
+            while count_append <= 5:
+                agent_list.append('')
+                count_append += 1
         data = {
             'agent_name': agent_list[1],
             'phone_number': agent_list[3],
@@ -52,6 +62,7 @@ def writing_data(num_agent: int, num_string: int, gsheet_value: dict):
         }
     return data
 
+
 def rewriting_data(num_agent: int, num_string: int, gsheet_value: dict):
     if num_agent == 1 or num_agent == 4 or num_agent == 5 or num_agent == 6:
         agent_list = gsheet_value.get('values')[0]
@@ -60,11 +71,15 @@ def rewriting_data(num_agent: int, num_string: int, gsheet_value: dict):
             case 4: company_name = 'Л Карго СПб'
             case 5: company_name = 'Изилоджистик СПб'
             case 6: company_name = 'Изилоджистик Казань'
-        role = ''
         if len(agent_list) < 11:
             role = 'Универсал'
         else:
             role = agent_list[10]
+        if len(agent_list) < 5:
+            count_append = 5 - len(agent_list)
+            while count_append <= 5:
+                agent_list.append('')
+                count_append += 1
         data = {
             'agent_name': agent_list[1],
             'phone_number':  agent_list[2],
@@ -74,13 +89,15 @@ def rewriting_data(num_agent: int, num_string: int, gsheet_value: dict):
         }
     elif num_agent == 2:
         agent_list = gsheet_value.get('values')[0]
-        role = ''
         if len(agent_list) < 8 or agent_list[7] == '':
             role = 'Универсал'
         else:
             role = agent_list[7]
         if len(agent_list) < 5:
-            agent_list.append('')
+            count_append = 5 - len(agent_list)
+            while count_append <= 5:
+                agent_list.append('')
+                count_append += 1
         data = {
             'agent_name': agent_list[1],
             'phone_number': agent_list[2],
@@ -90,11 +107,15 @@ def rewriting_data(num_agent: int, num_string: int, gsheet_value: dict):
         }
     elif num_agent == 3:
         agent_list = gsheet_value.get('values')[0]
-        role = ''
         if len(agent_list) < 12:
             role = 'Универсал'
         else:
             role = agent_list[11]
+        if len(agent_list) < 5:
+            count_append = 5 - len(agent_list)
+            while count_append <= 5:
+                agent_list.append('')
+                count_append += 1
         data = {
             'agent_name': agent_list[1],
             'phone_number': agent_list[3],
@@ -103,6 +124,7 @@ def rewriting_data(num_agent: int, num_string: int, gsheet_value: dict):
             'company_name': 'Л Карго Мск'
         }
     return data
+
 
 def name_company_number(full_name_company: str):
     """
@@ -118,6 +140,7 @@ def name_company_number(full_name_company: str):
         case 'Изилоджистик СПб': num_table = 5
         case 'Изилоджистик Казань': num_table = 6
     return num_table
+
 
 def number_company_name(number_company: int):
     """

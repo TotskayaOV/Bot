@@ -1,7 +1,7 @@
 from aiogram.types import Message, CallbackQuery
 from aiogram.dispatcher.middlewares import BaseMiddleware
 
-from loader import dp, db
+from loader import db
 
 # admins = [1, 2]
 # coordinators = [1, 2]

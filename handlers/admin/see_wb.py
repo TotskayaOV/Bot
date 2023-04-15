@@ -1,6 +1,7 @@
 from aiogram.types import Message
 from loader import dp, db
 
+
 @dp.message_handler(commands=['current_tasks'])
 async def show_tasks(message: Message, admin: bool):
     if admin:
@@ -11,7 +12,7 @@ async def show_tasks(message: Message, admin: bool):
             for i in range(len(list_db)):
                 string_db += f'{numder_list}. {list_db[i][1]}: Компания {list_db[i][4]},\n' \
                              f'телефон: {list_db[i][2]}, ИНН: {list_db[i][3]},\n' \
-                             f'дата создания заявки: {list_db[i][5]}\n' \
+                             f'время создания заявки: {list_db[i][5]}\n' \
                              f'комментарий: {list_db[i][7]}\n'
                 numder_list += 1
         else:

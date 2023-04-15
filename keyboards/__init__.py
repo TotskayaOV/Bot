@@ -9,8 +9,6 @@ from .inline import cancel_agent_div
 from .inline import application_jira
 
 
-
-
 __all__ = ['kb_menu', 'kb_cancel_fsm', 'kb_role_user', 'kb_coord_inline',
            'kb_div_inline', 'kb_div_nd_inline', 'other_company', 'cancel_agent_div',
            'application_jira']

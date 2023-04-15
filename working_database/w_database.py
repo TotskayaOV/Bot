@@ -1,5 +1,6 @@
 import sqlite3
 
+
 class DataBase:
     def __init__(self, db_path: str = 'data_base/bot_db.db'):
         self.db_path = db_path
@@ -32,6 +33,7 @@ class DataBase:
         agent_name TEXT, phone_number INTEGER, inn_number INTEGER, 
         company_name TEXT, date_up DATETIME, date_down DATETIME, comment TEXT, last_user INTEGER)'''
         self.execute(sql, commit=True)
+
 
     def create_table_user_access(self):
         sql = '''CREATE TABLE IF NOT EXISTS user_access 
@@ -88,13 +90,21 @@ class DataBase:
         self.execute(sql, parameters, commit=True)
 
 
+    def add_dump_comm_phone(self, dump_agent: dict):
+        parameters = (dump_agent.get('comment'), dump_agent.get('phone_number'))
+        sql = '''UPDATE dump_agent SET comment=? WHERE phone_number=?'''
+        self.execute(sql, parameters, commit=True)
+
+
     def get_all_com_applications(self):
         sql = '''SELECT * FROM com_applications'''
         return self.execute(sql, fetchall=True)
 
+
     def get_all_user_access(self):
         sql = '''SELECT * FROM user_access'''
         return self.execute(sql, fetchall=True)
+
 
     def get_all_dump_agent(self):
         sql = '''SELECT * FROM dump_agent'''

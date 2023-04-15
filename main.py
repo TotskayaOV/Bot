@@ -3,6 +3,7 @@ from handlers import dp
 from loader import on_startup, on_shutdown
 import middleware
 
+
 async def on_start(_):
     print('Start Bot')
 

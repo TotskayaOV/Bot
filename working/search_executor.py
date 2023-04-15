@@ -1,7 +1,25 @@
 from external_database import *
+from datetime import datetime
 from asyncio import sleep
-from loader import db
+from loader import db, log_id
+from send_massage import notify
 from .comment_area import sent_div_list, sent_coor_list, send_to_dump
+
+
+async def storage_defective_agents(defective_list: list):
+    await sleep(60)
+    try:
+        for element in defective_list:
+            up_data = rewriting_data(element[0], element[1],
+                                     google_update(element[1], element[0]))
+            if (up_data.get('inn_number') == '') or (up_data.get('phone_number') == ''):
+                await sent_div_list(up_data)
+            else:
+                await sent_coor_list(up_data)
+        defective_list.clear()
+    except Exception as err:
+        notify(log_id, f"{err}\n:: {datetime.now()} ::\nошибка подключения к Googlesheets "
+                       f"при обновлении storage_defective_agents")
 
 
 async def cheking_list(num_com: int, number_list: list, values: dict):
@@ -18,22 +36,19 @@ async def cheking_list(num_com: int, number_list: list, values: dict):
     :param values: данные для формирования карточки агента (через writing_data)
     :return: записывает данные в БД агентов в работе
     """
+    list_for_defective_agents = []
     for i in range(len(number_list)):
         data = writing_data(num_com, number_list[i], values)
         check_dump = db.get_dump_agent(agent_name=data.get('agent_name'))
-        my_adminset = db.get_user_access(user_role='admin')
         if not check_dump:
             if (data.get('inn_number') == '') or (data.get('phone_number') == ''):
-                await sleep(60)
-                up_data = rewriting_data(num_com, number_list[i], google_update(number_list[i], num_com))
-                if (up_data.get('inn_number') == '') or (up_data.get('phone_number') == ''):
-                    await sent_div_list(data, my_adminset)
-                else:
-                    data = up_data
-                    await sent_coor_list(data, my_adminset)
+                list_for_defective_agents.append([num_com, number_list[i]])
             else:
-                await sent_coor_list(data, my_adminset)
+                await sent_coor_list(data)
             db.add_dump_agent(send_to_dump(number_list[i], data))
+    if len(list_for_defective_agents) != 0:
+        await storage_defective_agents(list_for_defective_agents)
+        list_for_defective_agents.clear()
 
 
 async def cheking_workbase():
@@ -58,13 +73,13 @@ async def cheking_workbase():
     numbers_IK = column_comparison(values_IK)
     if len(numbers_IM) != 0:
         await cheking_list(1, numbers_IM, values_IM)
-    if len(numbers_Yg) != 0:
+    elif len(numbers_Yg) != 0:
         await cheking_list(2, numbers_Yg, values_Yg)
-    if len(numbers_Lk) != 0:
+    elif len(numbers_Lk) != 0:
         await cheking_list(3, numbers_Lk, values_Lk)
-    if len(numbers_LkSpb) != 0:
+    elif len(numbers_LkSpb) != 0:
         await cheking_list(4, numbers_LkSpb, values_LkSpb)
-    if len(numbers_IS) != 0:
+    elif len(numbers_IS) != 0:
         await cheking_list(5, numbers_IS, values_IS)
-    if len(numbers_IK) != 0:
+    elif len(numbers_IK) != 0:
         await cheking_list(6, numbers_IK, values_IK)
