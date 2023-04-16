@@ -6,11 +6,11 @@ from oauth2client.service_account import ServiceAccountCredentials
 
 CREDENTIALS_FILE = 'external_database/cbt.json'
 spreadsheet_id0 = '1aJV1szm0CnChInO79eWrnrnxt6jsjmuFQ3tIDcVtbtY'    #Сводная
-spreadsheet_id1 = '1ammlfHCNNYwT7TEMyilZxcAEsDUgA4VWcGfjAnEhL2g'    #ИзиМск - 1
-spreadsheet_id2 = '12CVgah0l3YuD7s5P_hj6NyWZxO45GlN0XlWuRbvxo_E'    #Яго - 2
-spreadsheet_id3 = '1qCzJA60FJnf0BN0vFnkgIazCejhLW-k8wg3BUSaLZek'    #Л-Карго (Мск и СПБ) -3, 4
-spreadsheet_id5 = '1VyHAZ7hBIL170DJ4HkTHKVYKoKNx-AncVywj5NxPsIU'    #ИзиСПб - 5
-spreadsheet_id6 = '1vCKUOM1Q3fFAT8itHq58sPmzNuKGc58v9aVusIQ2BdQ'    #ИзиКазань - 6
+spreadsheet_id1 = '1pbt5_RszLGMJoDYJ_VS7pwXvc6P_548EF7lnfZae3sc'    #ИзиМск - 1
+spreadsheet_id2 = '14-p_wqNxbL91q5xdhhDiYnwn5Ov70kkF3tfzhGiblh8'    #Яго - 2
+spreadsheet_id3 = '14-z2rYzMbPKVtk_rEdNrKdwCV-rR8CU6_3uKj6I4vcg'    #Л-Карго (Мск и СПБ) -3, 4
+spreadsheet_id5 = '1NU0TkYt-zwG630U_SYjdvHqcFJMPLhZEMOXe2snN_1w'    #ИзиСПб - 5
+spreadsheet_id6 = '1ZZYMsHr922cdC2eAPugPwBxyneaX2uh6okxVZu-xKcw'    #ИзиКазань - 6
 
 credentials = ServiceAccountCredentials.from_json_keyfile_name(
         CREDENTIALS_FILE, ['https://www.googleapis.com/auth/spreadsheets',

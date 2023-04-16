@@ -41,6 +41,22 @@ def call_div(text_mess: str):
         notify(my_adminset[i][1], text_mess)
 
 
+def call_all(text_mess: str):
+    """
+    Отправляет простое сообщение пользователям с ролью admin, coordinator и divisional_mentor через notify
+    :param text_mess: текстовое сообщение (str)
+    """
+    my_adminset = db.get_user_access(user_role='admin')
+    my_divset = db.get_user_access(user_role='divisional_mentor')
+    my_coorset = db.get_user_access(user_role='coordinator')
+    if my_divset:
+        my_adminset.extend(my_divset)
+    if my_coorset:
+        my_adminset.extend(my_coorset)
+    for i in range(len(my_adminset)):
+        notify(my_adminset[i][1], text_mess)
+
+
 def update_agent_comment(data: tuple, new_data: dict):
     """
     перезаписывает комментарий в БД агентов в работе
