@@ -12,15 +12,17 @@ from send_massage import notify
 async def mes_start(message: Message, admin: bool):
     restart = False
     sleep_time = 60
-    while restart == False:
+    while not restart:
         try:
             print(f'Запустились {datetime.now()}')
             await cheking_workbase()
-            sleep_time = 60
         except Exception as err:
             notify(log_id, f"{err}\n:: {datetime.now()} ::\nошибка подключения к Googlesheets")
             sleep_time += 30
+        else:
+            sleep_time = 60
         finally:
             print(f'Уснули {datetime.now()}')
             await sleep(sleep_time)
+
 

@@ -16,6 +16,7 @@ db = DataBase(db_path=db_path)
 log_id = os.getenv('LOG_ID')
 
 
+
 async def on_startup(_):
     notify(log_id, 'Bot started!')
     try:

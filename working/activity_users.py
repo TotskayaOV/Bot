@@ -177,6 +177,6 @@ def duplication_TIN_information(agent_tuples: list):
     string_message = ''
     for i_dict in range(len(agent_tuples)):
         string_message += f'{agent_tuples[i_dict][1]} т.: {agent_tuples[i_dict][2]} ' \
-                          f'ИНН: {agent_tuples[i_dict][2]} Компания: {agent_tuples[i_dict][3]}\n'
+                          f'ИНН: {agent_tuples[i_dict][4]} Компания: {agent_tuples[i_dict][3]}\n'
     string_message += '🆘ДАННЫЕ ИНН ДУБЛИРУЮТСЯ🆘'
     call_all(string_message)

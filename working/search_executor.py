@@ -3,7 +3,7 @@ from datetime import datetime
 from asyncio import sleep
 from loader import db, log_id
 from send_massage import notify
-from .comment_area import sent_div_list, sent_coor_list, send_to_dump
+from .comment_area import sent_div_list, sent_coor_list, send_to_dump, update_agent_comment
 
 
 async def storage_defective_agents(defective_list: list):
@@ -15,6 +15,10 @@ async def storage_defective_agents(defective_list: list):
             if (up_data.get('inn_number') == '') or (up_data.get('phone_number') == ''):
                 await sent_div_list(up_data)
             else:
+                if len(db.get_dump_agent(inn_number=up_data.get('inn_number'))) == 1:
+                    update_agent_comment(db.get_dump_agent(inn_number=up_data.get('inn_number'))[0], up_data)
+                else:
+                    update_agent_comment(db.get_dump_agent(phone_number=up_data.get('phone_number'))[0], up_data)
                 await sent_coor_list(up_data)
         defective_list.clear()
     except Exception as err:

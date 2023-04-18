@@ -89,7 +89,7 @@ def sent_to_com_applications(agent_set: tuple, user_id: int):
     dt_obj = datetime.datetime.now()
     data_dict = {'agent_name': agent_set[1], 'phone_number': agent_set[2], 'inn_number': agent_set[3],
                  'company_name': agent_set[4], 'date_up': agent_set[5],
-                 'date_down': dt_obj.strftime("%Y-%m-%d %H:%M:%S"), 'comment': agent_set[7], 'last_user': user_id}
+                 'date_down': dt_obj.strftime("%d-%m-%Y %H:%M:%S"), 'comment': agent_set[7], 'last_user': user_id}
     return data_dict
 
 
@@ -99,8 +99,8 @@ def chat_text(data: dict):
     :param data: принимает словарь в котором должны содержаться ключи:agent_name, phone_number, inn_number, company_name
     :return: строка (str)
     """
-    text_mess = f"ФИО:{data.get('agent_name')}\nТелефон: {data.get('phone_number')}\n" \
-                f"ИНН:{data.get('inn_number')}\nКомпания: {data.get('company_name')}\n" \
+    text_mess = f"ФИО: {data.get('agent_name')}\nТелефон: {data.get('phone_number')}\n" \
+                f"ИНН: {data.get('inn_number')}\nКомпания: {data.get('company_name')}\n" \
                 f"Роль: {data.get('role')}"
     return text_mess
 
@@ -116,7 +116,7 @@ def send_to_dump(row_number: int, data: dict):
     dt_obj = datetime.datetime.now()
     dump_data = {'agent_name': data.get('agent_name'), 'phone_number': data.get('phone_number'),
                  'inn_number': data.get('inn_number'), 'company_name': data.get('company_name'),
-                 'date_up': dt_obj.strftime("%Y-%m-%d %H:%M:%S"), 'row_number': row_number, 'comment': ''}
+                 'date_up': dt_obj.strftime("%d-%m-%Y %H:%M:%S"), 'row_number': row_number, 'comment': ''}
     return dump_data
 
 
