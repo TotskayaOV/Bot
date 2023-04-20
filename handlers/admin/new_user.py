@@ -3,7 +3,7 @@ import sqlite3
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import StatesGroup, State
 
-from loader import dp, db
+from loader import dp, db, admin_id
 from aiogram.types import Message
 from keyboards import kb_cancel_fsm, kb_role_user
 
@@ -16,7 +16,7 @@ class NewUser(StatesGroup):
 
 @dp.message_handler(commands=['add'], state=None)
 async def add_user(message: Message, admin: bool):
-    if admin:
+    if admin or int(admin_id) == message.from_user.id:
         await message.answer(text='Введите id (только цифры)', reply_markup=kb_cancel_fsm)
         await NewUser.user_id.set()
     else:
