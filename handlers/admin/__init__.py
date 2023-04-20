@@ -7,7 +7,7 @@ from .help_com import dp
 from .see_wb import dp
 from .remove_from_dump import dp
 from .giv_file import dp
-from .stich import dp
+# from .stich import dp
 
 
 __all__ = ['dp']
