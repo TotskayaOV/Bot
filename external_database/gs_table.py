@@ -1,16 +1,17 @@
 import httplib2
+import os
 import apiclient.discovery
 from oauth2client.service_account import ServiceAccountCredentials
 
 # Подключение API:
 
 CREDENTIALS_FILE = 'external_database/cbt.json'
-spreadsheet_id0 = '1aJV1szm0CnChInO79eWrnrnxt6jsjmuFQ3tIDcVtbtY'    #Сводная
-spreadsheet_id1 = '1pbt5_RszLGMJoDYJ_VS7pwXvc6P_548EF7lnfZae3sc'    #ИзиМск - 1
-spreadsheet_id2 = '14-p_wqNxbL91q5xdhhDiYnwn5Ov70kkF3tfzhGiblh8'    #Яго - 2
-spreadsheet_id3 = '14-z2rYzMbPKVtk_rEdNrKdwCV-rR8CU6_3uKj6I4vcg'    #Л-Карго (Мск и СПБ) -3, 4
-spreadsheet_id5 = '1NU0TkYt-zwG630U_SYjdvHqcFJMPLhZEMOXe2snN_1w'    #ИзиСПб - 5
-spreadsheet_id6 = '1ZZYMsHr922cdC2eAPugPwBxyneaX2uh6okxVZu-xKcw'    #ИзиКазань - 6
+spreadsheet_id0 = os.getenv('SPSH0')    #Сводная
+spreadsheet_id1 = os.getenv('SPSH1')    #ИзиМск - 1
+spreadsheet_id2 = os.getenv('SPSH2')    #Яго - 2
+spreadsheet_id3 = os.getenv('SPSH3')    #Л-Карго (Мск и СПБ) -3, 4
+spreadsheet_id5 = os.getenv('SPSH5')    #ИзиСПб - 5
+spreadsheet_id6 = os.getenv('SPSH6')    #ИзиКазань - 6
 
 credentials = ServiceAccountCredentials.from_json_keyfile_name(
         CREDENTIALS_FILE, ['https://www.googleapis.com/auth/spreadsheets',
