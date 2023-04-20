@@ -14,7 +14,7 @@ bot = Bot(os.getenv('TOKEN'))
 dp = Dispatcher(bot, storage=memory)
 db = DataBase(db_path=db_path)
 log_id = os.getenv('LOG_ID')
-
+group_id = os.getenv('GROUP_ID')
 
 
 async def on_startup(_):

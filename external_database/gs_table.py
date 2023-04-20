@@ -209,7 +209,7 @@ def writing_jira_status(row_num: str, comp_num: int):
 
 def writing_pivot_table(all_data: tuple):
     """
-    Данные приходят в виде кортежа кортежей
+    Данные приходят в виде списка кортежей
     (id INTEGER PRIMARY KEY AUTOINCREMENT,
         agent_name TEXT, phone_number INTEGER, inn_number INTEGER,
         company_name TEXT, date_up DATETIME, date_down DATETIME, comment TEXT, last_user INTEGER)'
