@@ -5,7 +5,7 @@ from oauth2client.service_account import ServiceAccountCredentials
 
 # Подключение API:
 
-CREDENTIALS_FILE = 'external_database/cbt.json'
+# CREDENTIALS_FILE = 'external_database/cbt.json'
 spreadsheet_id0 = os.getenv('SPSH0')    #Сводная
 spreadsheet_id1 = os.getenv('SPSH1')    #ИзиМск - 1
 spreadsheet_id2 = os.getenv('SPSH2')    #Яго - 2
