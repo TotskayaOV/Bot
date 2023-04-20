@@ -36,7 +36,7 @@ async def id_catch(message: Message, state: FSMContext):
         await New2User.next()
 
 
-@dp.message_handler(state=NewUser.name)
+@dp.message_handler(state=New2User.name)
 async def name_catch(message: Message, state: FSMContext):
     await state.update_data({'name': message.text})
     await message.answer(text='Выберите роль пользователя', reply_markup=kb_role_user)
