@@ -2,7 +2,7 @@ import xlsxwriter
 
 
 def uploading_file(data):
-    workbook = xlsxwriter.Workbook('temp_dir/pivot.xlsx')
+    workbook = xlsxwriter.Workbook('pivot.xlsx')
     worksheet = workbook.add_worksheet()
     for i in range(len(data)):
         for y in range(len(data[i])):

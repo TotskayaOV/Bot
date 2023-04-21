@@ -11,7 +11,7 @@ async def up_excel(message: Message, admin: bool):
         try:
             data = db.get_all_com_applications()
             uploading_file(data)
-            path = 'temp_dir/pivot.xlsx'
+            path = 'pivot.xlsx'
             await message.answer_document(InputFile(path))
             os.remove(path)
         except Exception as err:

@@ -2,7 +2,7 @@ import sqlite3
 
 
 class DataBase:
-    def __init__(self, db_path: str = 'data_base/bot_db.db'):
+    def __init__(self, db_path: str = './cred/bot_db.db'):
         self.db_path = db_path
 
 
