@@ -14,7 +14,6 @@ async def mes_start(message: Message, admin: bool):
     sleep_time = 60
     while not restart:
         try:
-            print(f'Запустились {datetime.now()}')
             await cheking_workbase()
         except Exception as err:
             notify(log_id, f"{err}\n:: {datetime.now()} ::\nошибка подключения к Googlesheets")
@@ -22,7 +21,6 @@ async def mes_start(message: Message, admin: bool):
         else:
             sleep_time = 60
         finally:
-            print(f'Уснули {datetime.now()}')
             await sleep(sleep_time)
 
 
