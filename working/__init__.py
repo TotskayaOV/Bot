@@ -4,7 +4,9 @@ from .comment_area import chat_text
 from .activity_users import add_new_comment
 from .comment_area import update_agent_comment
 from .comment_area import overwriting_comment
+from .processing_mentors import show_list_tags
 
 __all__ = ['cheking_workbase', 'verification_agent', 'chat_text',
            'add_new_comment', 'div_cancel_agent', 'div_jira_agent',
-           'div_update_agent', 'update_agent_comment', 'overwriting_comment']
+           'div_update_agent', 'update_agent_comment', 'overwriting_comment',
+           'show_list_tags']

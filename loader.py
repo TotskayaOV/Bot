@@ -23,6 +23,8 @@ async def on_startup(_):
         db.create_table_com_applications()
         db.create_table_user_access()
         db.create_table_dump_agent()
+        db.create_list_mentors()
+        db.create_table_dump_comment()
         notify(log_id, 'DataBase...ok!')
     except sqlite3.OperationalError:
         notify(log_id, 'DataBase .... фиг вам, а не датабаза')

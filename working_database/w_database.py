@@ -53,7 +53,7 @@ class DataBase:
     def create_table_dump_comment(self):
         sql = '''CREATE TABLE IF NOT EXISTS dump_comment 
         (id INTEGER PRIMARY KEY AUTOINCREMENT,
-        id_note TEXT, agent_name TEXT, company_name TEXT, 
+        agent_name TEXT, company_name TEXT, 
         phone_number INTEGER, inn_number INTEGER, 
         comment TEXT, date_up DATETIME, user_id INTEGER)'''
         self.execute(sql, commit=True)
@@ -102,12 +102,12 @@ class DataBase:
 
 
     def add_comment_to_repository(self, dump_agent: dict):
-        parameters = (dump_agent.get('id_note'), dump_agent.get('agent_name'), dump_agent.get('company_name'),
+        parameters = (dump_agent.get('agent_name'), dump_agent.get('company_name'),
                       dump_agent.get('phone_number'), dump_agent.get('inn_number'),
                       dump_agent.get('comment'), dump_agent.get('date_up'), dump_agent.get('user_id'))
-        sql = '''INSERT INTO dump_comment (id_note, agent_name, company_name, phone_number, inn_number, 
+        sql = '''INSERT INTO dump_comment (agent_name, company_name, phone_number, inn_number, 
         comment, date_up, user_id)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)'''
+        VALUES (?, ?, ?, ?, ?, ?, ?)'''
         self.execute(sql, parameters, commit=True)
 
     def update_dump_comm(self, dump_agent: dict):
@@ -136,6 +136,15 @@ class DataBase:
 
     def get_all_user_access(self):
         sql = '''SELECT * FROM user_access'''
+        return self.execute(sql, fetchall=True)
+
+    def get_all_comment_to_repository(self):
+        sql = '''SELECT * FROM dump_comment'''
+        return self.execute(sql, fetchall=True)
+
+
+    def get_all_mentors(self):
+        sql = '''SELECT * FROM mentors'''
         return self.execute(sql, fetchall=True)
 
 

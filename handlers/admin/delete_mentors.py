@@ -8,26 +8,26 @@ from aiogram.types import Message
 from keyboards import kb_cancel_fsm
 
 
-class DeleteUser(StatesGroup):
+class DeleteMentor(StatesGroup):
     user_id = State()
 
 
-@dp.message_handler(commands=['del'], state=None)
+@dp.message_handler(commands=['del_m'], state=None)
 async def delete_user(message: Message, admin: bool):
     if admin:
         await message.answer(text='Введите id', reply_markup=kb_cancel_fsm)
-        await DeleteUser.user_id.set()
+        await DeleteMentor.user_id.set()
     else:
         await message.answer('У вас нет доступа к этой функции')
 
 
-@dp.message_handler(state=DeleteUser.user_id)
+@dp.message_handler(state=DeleteMentor.user_id)
 async def id_user_catch(message: Message, state: FSMContext):
     await state.update_data({'user_id': message.text})
     data = await state.get_data()
     user_id = int(data.get('user_id'))
     try:
-        db.remove_user(user_id)
+        db.remove_mentors(user_id)
         await message.answer(f"Пользователь {user_id} удален")
     except sqlite3.OperationalError:
         await message.answer("Ошибка удаления пользователя! Проверьте правильность вводимых данных")

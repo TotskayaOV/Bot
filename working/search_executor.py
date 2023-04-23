@@ -13,7 +13,7 @@ async def storage_defective_agents(defective_list: list):
             up_data = rewriting_data(element[0], element[1],
                                      google_update(element[1], element[0]))
             if (up_data.get('inn_number') == '') or (up_data.get('phone_number') == ''):
-                await sent_div_list(up_data)
+                await sent_div_list(up_data, 'НЕДОСТАТОЧНО ДАННЫХ', 1)
             else:
                 if len(db.get_dump_agent(inn_number=up_data.get('inn_number'))) == 1:
                     update_agent_comment(db.get_dump_agent(inn_number=up_data.get('inn_number'))[0], up_data)
@@ -77,13 +77,13 @@ async def cheking_workbase():
     numbers_IK = column_comparison(values_IK)
     if len(numbers_IM) != 0:
         await cheking_list(1, numbers_IM, values_IM)
-    elif len(numbers_Yg) != 0:
+    if len(numbers_Yg) != 0:
         await cheking_list(2, numbers_Yg, values_Yg)
-    elif len(numbers_Lk) != 0:
+    if len(numbers_Lk) != 0:
         await cheking_list(3, numbers_Lk, values_Lk)
-    elif len(numbers_LkSpb) != 0:
+    if len(numbers_LkSpb) != 0:
         await cheking_list(4, numbers_LkSpb, values_LkSpb)
-    elif len(numbers_IS) != 0:
+    if len(numbers_IS) != 0:
         await cheking_list(5, numbers_IS, values_IS)
-    elif len(numbers_IK) != 0:
+    if len(numbers_IK) != 0:
         await cheking_list(6, numbers_IK, values_IK)

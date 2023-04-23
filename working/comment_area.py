@@ -2,7 +2,8 @@ import datetime
 from loader import db, dp
 from send_massage import notify
 from keyboards import kb_coord_inline
-from keyboards import kb_div_nd_inline
+from keyboards import kb_div_inline, kb_div_nd_inline
+from .processing_mentors import show_list_tags
 
 
 def call_admin(text_mess: str):
@@ -120,7 +121,7 @@ def send_to_dump(row_number: int, data: dict):
     return dump_data
 
 
-async def sent_div_list(data):
+async def sent_div_list(data, comment_string: str, kb_await):
     """
     Функция для отправки сообщения админам и ДН. Формирует список с id_user роль-дивизионный_менеджер и объединяет
     его с my_adminset. Циклом for проходит по id_user общего списка и отправляет сообщение сформировав строку через
@@ -129,17 +130,28 @@ async def sent_div_list(data):
     """
     my_adminset = db.get_user_access(user_role='admin')
     my_divset = db.get_user_access(user_role='divisional_mentor')
+    if type(data) == tuple:
+        mentors_tags = show_list_tags(data[4])
+        text_mess = f"ФИО: {data[1]}\nТелефон: {data[2]}\nИНН: {data[3]}\nКомпания: {data[4]}"
+    else:
+        mentors_tags = show_list_tags(data.get('company_name'))
+        text_mess = f"ФИО: {data.get('agent_name')}\nТелефон: {data.get('phone_number')}\n" \
+                    f"ИНН: {data.get('inn_number')}\nКомпания: {data.get('company_name')}"
+    match kb_await:
+        case 1: kb_inline = kb_div_nd_inline
+        case 2: kb_inline = kb_div_inline
+
     if my_divset:
         my_adminset.extend(my_divset)
     for y in range(len(my_adminset)):
         chat_id = my_adminset[y][1]
-        text_mess = chat_text(data) + "\nНЕДОСТАТОЧНО ДАННЫХ"
-        await dp.bot.send_message(chat_id, text=text_mess, reply_markup=kb_div_nd_inline)
+        text_mess2 = mentors_tags + '\n' + text_mess + "\n" + comment_string
+        await dp.bot.send_message(chat_id, text=text_mess2, reply_markup=kb_inline)
 
 
 async def sent_coor_list(data):
     """
-    Функция для отправки сообщения админам и ДН. Формирует список с id_user роль-координатор и объединяет
+    Функция для отправки сообщения админам и координаторам. Формирует список с id_user роль-координатор и объединяет
     его с my_adminset. Циклом for проходит по id_user общего списка и отправляет сообщение сформировав строку через
     chat_text(). К сообщению прикрепляется инлайн клавиатура kb_coord_inline.
     :param data: словарь {'agent_name': '', 'phone_number': '', 'inn_number': '', 'role': '', 'company_name': ''}

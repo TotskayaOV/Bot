@@ -1,10 +1,10 @@
-from loader import db, dp, log_id
+from loader import db, log_id
 from external_database import writing_status, writing_jira_status, google_update, rewriting_data
 from send_massage import notify
-from keyboards import kb_div_nd_inline, kb_coord_inline, kb_div_inline
 from external_database import name_company_number
 from .comment_area import update_agent_comment, call_admin, call_coor, call_div, call_all, \
-    sent_to_com_applications, overwriting_comment, chat_text
+    sent_to_com_applications, overwriting_comment, sent_div_list, sent_coor_list
+from .using_comments_db import get_comments_db
 
 
 def verification_agent(data: dict):
@@ -47,8 +47,9 @@ def div_cancel_agent(data: dict):
                 info_from_dump = db.get_dump_agent(inn_number=data.get('ИНН'))[0]
             except:
                 info_from_dump = db.get_dump_agent(phone_number=data.get('Телефон'))[0]
-            text_mes = data.get('ФИО') + " " + data.get('Компания') + '\nотказ от сотрудничества 💩'
+            text_mes = data.get('ФИО') + " " + data.get('Компания') + '\nотказ от сотрудничества'
             call_div(text_mes)
+            get_comments_db(info_from_dump, data.get('last_user'), 'отказ от сотрудничества')
             id_agent_dump = info_from_dump[0]
             text_wdb = sent_to_com_applications(info_from_dump, data.get('last_user'))
             text_wdb['comment'] = overwriting_comment(text_wdb.get('comment'), 'отказ от сотрудничества')
@@ -73,6 +74,7 @@ def div_jira_agent(data: dict):
                 info_from_dump = db.get_dump_agent(phone_number=data.get('Телефон'))[0]
             text_mes = data.get('ФИО') + " " + data.get('Компания') + '\nJIRA 🤓'
             call_div(text_mes)
+            get_comments_db(info_from_dump, data.get('last_user'), 'JIRA')
             id_agent_dump = info_from_dump[0]
             text_wdb = sent_to_com_applications(info_from_dump, data.get('last_user'))
             text_wdb['comment'] = overwriting_comment(text_wdb.get('comment'), 'JIRA')
@@ -103,27 +105,15 @@ async def div_update_agent(data: dict):
                 info_from_dump = db.get_dump_agent(phone_number=data.get('Телефон'))[0]
             text_mes = data.get('ФИО') + " " + data.get('Компания') + '\nданные обновлены 🤓'
             call_div(text_mes)
+            get_comments_db(info_from_dump, data.get('last_user'), 'данные обновлены')
             num_row = info_from_dump[6]
             num_table = name_company_number(info_from_dump[4])
             value = rewriting_data(num_table, num_row, google_update(str(num_row), num_table))
             update_agent_comment(info_from_dump, value)
-            my_adminset = db.get_user_access(user_role='admin')
             if (value.get('inn_number') == '') or (value.get('phone_number') == ''):
-                my_divset = db.get_user_access(user_role='divisional_mentor')
-                if my_divset:
-                    my_adminset.extend(my_divset)
-                for y in range(len(my_adminset)):
-                    chat_id = my_adminset[y][1]
-                    text_mess = chat_text(value) + "\nНЕДОСТАТОЧНО ДАННЫХ"
-                    await dp.bot.send_message(chat_id, text=text_mess, reply_markup=kb_div_nd_inline)
+                await sent_div_list(value, 'НЕДОСТАТОЧНО ДАННЫХ', 1)
             else:
-                my_coorset = db.get_user_access(user_role='coordinator')
-                if my_coorset:
-                    my_adminset.extend(my_coorset)
-                for y in range(len(my_adminset)):
-                    chat_id = my_adminset[y][1]
-                    text_mess = chat_text(value)
-                    await dp.bot.send_message(chat_id, text=text_mess, reply_markup=kb_coord_inline)
+                await sent_coor_list(value)
         else:
             duplication_TIN_information(db.get_dump_agent(inn_number=data.get('ИНН')))
     except Exception as err:
@@ -144,26 +134,20 @@ async def add_new_comment(data: dict, last_user: int):
         if len(db.get_dump_agent(inn_number=data.get('ИНН'))) < 2:
             if data.get('inn_number', False):
                 agent_data = db.get_dump_agent(inn_number=data.get('inn_number'))[0]
+                get_comments_db(agent_data, last_user, data['comment'])
                 data['comment'] = overwriting_comment(agent_data[7], data.get('comment'))
                 db.add_dump_comm(data)
             else:
                 agent_data = db.get_dump_agent(phone_number=data.get('phone_number'))[0]
+                get_comments_db(agent_data, last_user, data['comment'])
                 data['comment'] = overwriting_comment(agent_data[7], data.get('comment'))
                 db.add_dump_comm_phone(data)
             db.add_dump_comm(data)
-            my_adminset = db.get_user_access(user_role='admin')
-            my_divset = db.get_user_access(user_role='divisional_mentor')
-            if my_divset:
-                my_adminset.extend(my_divset)
-            text_mess = f"ФИО: {agent_data[1]}\nТелефон: {agent_data[2]}\nИНН: {agent_data[3]}\n" \
-                        f"Компания: {agent_data[4]}\n{data.get('comment')}"
-            for y in range(len(my_adminset)):
-                chat_id = my_adminset[y][1]
-                if data.get('comment').endswith('ошибка в номере телефона') \
-                        or data.get('comment').endswith('ошибка в номере ИНН'):
-                    await dp.bot.send_message(chat_id, text=text_mess, reply_markup=kb_div_nd_inline)
-                else:
-                    await dp.bot.send_message(chat_id, text=text_mess, reply_markup=kb_div_inline)
+            if data.get('comment').endswith('ошибка в номере телефона')\
+                    or data.get('comment').endswith('ошибка в номере ИНН'):
+                await sent_div_list(agent_data, data.get('comment'), 1)
+            else:
+                await sent_div_list(agent_data, data.get('comment'), 2)
             call_coor(f"ФИО: {agent_data[1]} отправлен на уточнение")
         else:
             duplication_TIN_information(db.get_dump_agent(inn_number=data.get('ИНН')))
