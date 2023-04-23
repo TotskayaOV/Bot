@@ -23,19 +23,19 @@ def uploading_file_period(data, data2, dict_data: dict):
     num_str = 1
     num_str2 = 1
     for i in range(len(data)):
-        for y in range(len(data[i])):
-            date_record = data[i][5].split(' ')[0]
-            if datetime.datetime.strptime(date_record, '%d-%m-%Y') >= date1\
-                    and datetime.datetime.strptime(date_record, '%d-%m-%Y') <= date2:
+        date_record = data[i][5].split(' ')[0]
+        if datetime.datetime.strptime(date_record, '%d-%m-%Y') >= date1 \
+                and datetime.datetime.strptime(date_record, '%d-%m-%Y') <= date2:
+            for y in range(len(data[i])):
                 worksheet.write(num_str, y, data[i][y])
-                num_str +=1
+            num_str +=1
     if data2:
         worksheet2 = workbook.add_worksheet('Comment')
         for i in range(len(data2)):
-            for y in range(len(data2[i])):
-                date_record = data2[i][6].split(' ')[0]
-                if datetime.datetime.strptime(date_record, '%d-%m-%Y') >= date1 \
-                        and datetime.datetime.strptime(date_record, '%d-%m-%Y') <= date2:
+            date_record = data2[i][6].split(' ')[0]
+            if datetime.datetime.strptime(date_record, '%d-%m-%Y') >= date1 \
+                    and datetime.datetime.strptime(date_record, '%d-%m-%Y') <= date2:
+                for y in range(len(data2[i])):
                     worksheet2.write(num_str2, y, data2[i][y])
-                    num_str2 += 1
+                num_str2 += 1
     workbook.close()
