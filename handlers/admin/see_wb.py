@@ -3,6 +3,11 @@ from loader import dp, db
 
 
 def string_current_tasks():
+    """
+    формирует строку из списка котрежей задач в работе
+    :return: нумерованная строка задач в работе, содержит ФИО, id(PKey), название компании, телефон, ИНН,
+            время создания заявки и все комментарии
+    """
     list_db = db.get_all_dump_agent()
     string_db = "Сейчас в работе:\n"
     if len(list_db) > 0:

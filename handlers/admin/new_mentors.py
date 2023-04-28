@@ -27,15 +27,9 @@ async def add_mentor(message: Message, admin: bool):
 
 @dp.message_handler(state=NewMentor.user_id)
 async def id_catch(message: Message, state: FSMContext):
-    if db.get_list_mentors(user_id=message.text):
-        await message.answer("Ошибка добавления пользователя!\n"
-                             "Данный id уже зарегистрирован в системе", reply_markup=kb_cancel_fsm)
-        await state.reset_data()
-        await state.finish()
-    else:
-        await state.update_data({'user_id': message.text})
-        await message.answer(text='Введите Фамилию', reply_markup=kb_cancel_fsm)
-        await NewMentor.next()
+    await state.update_data({'user_id': message.text})
+    await message.answer(text='Введите Фамилию', reply_markup=kb_cancel_fsm)
+    await NewMentor.next()
 
 
 @dp.message_handler(state=NewMentor.name)

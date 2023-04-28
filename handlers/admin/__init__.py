@@ -11,6 +11,9 @@ from .new_mentors import dp
 from .get_mentor_all import dp
 from .delete_mentors import dp
 from .giv_file_for_time import dp
+from .remove_ca import dp
+from .remove_kick import dp
+from .check_tasks import dp
 # from .stich import dp
 
 

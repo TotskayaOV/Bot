@@ -4,6 +4,7 @@ from asyncio import sleep
 from loader import db, log_id
 from send_massage import notify
 from .comment_area import sent_div_list, sent_coor_list, send_to_dump, update_agent_comment
+from .checking_progress import writing_table_task_progress
 
 
 async def storage_defective_agents(defective_list: list):
@@ -19,6 +20,7 @@ async def storage_defective_agents(defective_list: list):
                     update_agent_comment(db.get_dump_agent(inn_number=up_data.get('inn_number'))[0], up_data)
                 else:
                     update_agent_comment(db.get_dump_agent(phone_number=up_data.get('phone_number'))[0], up_data)
+                writing_table_task_progress(up_data, 1)
                 await sent_coor_list(up_data)
         defective_list.clear()
     except Exception as err:
@@ -47,9 +49,11 @@ async def cheking_list(num_com: int, number_list: list, values: dict):
         if not check_dump:
             if (data.get('inn_number') == '') or (data.get('phone_number') == ''):
                 list_for_defective_agents.append([num_com, number_list[i]])
+                db.add_dump_agent(send_to_dump(number_list[i], data))
             else:
                 await sent_coor_list(data)
-            db.add_dump_agent(send_to_dump(number_list[i], data))
+                db.add_dump_agent(send_to_dump(number_list[i], data))
+                writing_table_task_progress(data, 1)
     if len(list_for_defective_agents) != 0:
         await storage_defective_agents(list_for_defective_agents)
         list_for_defective_agents.clear()

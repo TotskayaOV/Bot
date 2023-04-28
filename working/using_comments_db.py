@@ -4,7 +4,7 @@ from loader import db, dp
 
 def get_comments_db(data_tuple: tuple, last_user: int, comment: str):
     """
-    на вход принимает данные агента из задач в рбаоте, id телеграмма проставившего комментарий и комментарий,
+    на вход принимает данные агента из задач в раобте, id телеграмма проставившего комментарий и комментарий,
     для записи в таблицу данных комментариев
     :param data_tuple: (id, agent_name, phone_number, inn_number,company_name, date_up, row_number, comment)
     :param last_user: int id_user

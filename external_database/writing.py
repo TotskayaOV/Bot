@@ -37,8 +37,7 @@ def writing_data(num_agent: int, num_string: int, gsheet_value: dict):
         data = {
             'agent_name': agent_list[1],
             'phone_number': agent_list[2],
-            'inn_number':
-            agent_list[4],
+            'inn_number': agent_list[4],
             'role': role,
             'company_name': 'Я го'
         }

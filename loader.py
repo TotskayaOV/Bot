@@ -25,6 +25,7 @@ async def on_startup(_):
         db.create_table_dump_agent()
         db.create_list_mentors()
         db.create_table_dump_comment()
+        db.create_table_task_kick()
         notify(log_id, 'DataBase...ok!')
     except sqlite3.OperationalError:
         notify(log_id, 'DataBase .... фиг вам, а не датабаза')

@@ -58,6 +58,12 @@ class DataBase:
         comment TEXT, date_up DATETIME, user_id INTEGER)'''
         self.execute(sql, commit=True)
 
+    def create_table_task_kick(self):
+        sql = '''CREATE TABLE IF NOT EXISTS task_kick 
+        (id_task INTEGER PRIMARY KEY,
+        message_time DATETIME, count_kick INTEGER)'''
+        self.execute(sql, commit=True)
+
 
     def create_list_mentors(self):
         sql = '''CREATE TABLE IF NOT EXISTS mentors 
@@ -101,6 +107,13 @@ class DataBase:
         self.execute(sql, parameters, commit=True)
 
 
+    def add_task_kick(self, task_data: dict):
+        parameters = (task_data.get('id_task'), task_data.get('message_time'), task_data.get('count_kick'))
+        sql = '''INSERT INTO task_kick (id_task, message_time, count_kick)
+        VALUES (?, ?, ?)'''
+        self.execute(sql, parameters, commit=True)
+
+
     def add_comment_to_repository(self, dump_agent: dict):
         parameters = (dump_agent.get('agent_name'), dump_agent.get('company_name'),
                       dump_agent.get('phone_number'), dump_agent.get('inn_number'),
@@ -114,6 +127,12 @@ class DataBase:
         parameters = (dump_agent.get('agent_name'), dump_agent.get('phone_number'), dump_agent.get('inn_number'),
                       dump_agent.get('comment'), dump_agent.get('id'))
         sql = '''UPDATE dump_agent SET agent_name=?, phone_number=?, inn_number=?, comment=? WHERE id=? '''
+        self.execute(sql, parameters, commit=True)
+
+
+    def update_task_kick(self, task_data: dict):
+        parameters = (task_data.get('count_kick'), task_data.get('id_task'))
+        sql = '''UPDATE task_kick SET count_kick=? WHERE id_task=? '''
         self.execute(sql, parameters, commit=True)
 
 
@@ -150,6 +169,11 @@ class DataBase:
 
     def get_all_dump_agent(self):
         sql = '''SELECT * FROM dump_agent'''
+        return self.execute(sql, fetchall=True)
+
+
+    def get_all_task_kick(self):
+        sql = '''SELECT * FROM task_kick'''
         return self.execute(sql, fetchall=True)
 
 
@@ -195,9 +219,20 @@ class DataBase:
         self.execute(sql, parameters, commit=True)
 
 
+    def remove_table_com_applications(self, id: int):
+        parameters = (id,)
+        sql = '''DELETE FROM com_applications WHERE id=?'''
+        self.execute(sql, parameters, commit=True)
+
+
     def remove_dump_agent(self, id: int):
         parameters = (id,)
         sql = '''DELETE FROM dump_agent WHERE id=?'''
+        self.execute(sql, parameters, commit=True)
+
+    def remove_task_kick(self, id_task: int):
+        parameters = (id_task,)
+        sql = '''DELETE FROM task_kick WHERE id_task=?'''
         self.execute(sql, parameters, commit=True)
 
 
