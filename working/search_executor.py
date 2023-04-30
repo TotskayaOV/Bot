@@ -1,9 +1,9 @@
 from external_database import *
-from datetime import datetime
+from datetime import datetime, timedelta
 from asyncio import sleep
 from loader import db, log_id
 from send_massage import notify
-from .comment_area import sent_div_list, sent_coor_list, send_to_dump, update_agent_comment
+from .comment_area import sent_div_list, sent_coor_list, send_to_dump, update_agent_comment, call_admin
 from .checking_progress import writing_table_task_progress
 
 
@@ -28,6 +28,26 @@ async def storage_defective_agents(defective_list: list):
                        f"при обновлении storage_defective_agents")
 
 
+def check_com_application(data):
+    """
+    Метод проверяет полное совпадение данных в выполненных задачах и в данных полученных из Google sheets
+    :param data: словарь с карточкой агента
+    :return: True - если данные совпадают, False - если совпадений не найдено
+    """
+    done_date = datetime.now()
+    done_date1 = done_date - timedelta(days=1)
+    done_date2 = done_date1.strftime("%d-%m-%Y %H:%M:%S")
+    done_data = db.get_done_com_applications(done_date2)
+    if not done_data:
+        return True
+    else:
+        for i in range(len(done_data)):
+            if data.get('agent_name') == done_data[i][1] and data.get('phone_number') == str(done_data[i][2])\
+                    and data.get('inn_number') == str(done_data[i][3]) and data.get('company_name') == done_data[i][4]:
+                return False
+        return True
+
+
 async def cheking_list(num_com: int, number_list: list, values: dict):
     """
     Проходит циклом for по индексам(i) полученного списка строк(number_list). Через функцию writing_data формирует
@@ -45,15 +65,16 @@ async def cheking_list(num_com: int, number_list: list, values: dict):
     list_for_defective_agents = []
     for i in range(len(number_list)):
         data = writing_data(num_com, number_list[i], values)
-        check_dump = db.get_dump_agent(agent_name=data.get('agent_name'))
-        if not check_dump:
-            if (data.get('inn_number') == '') or (data.get('phone_number') == ''):
-                list_for_defective_agents.append([num_com, number_list[i]])
-                db.add_dump_agent(send_to_dump(number_list[i], data))
-            else:
-                await sent_coor_list(data)
-                db.add_dump_agent(send_to_dump(number_list[i], data))
-                writing_table_task_progress(data, 1)
+        if check_com_application(data):
+            check_dump = db.get_dump_agent(agent_name=data.get('agent_name'))
+            if not check_dump:
+                if (data.get('inn_number') == '') or (data.get('phone_number') == ''):
+                    list_for_defective_agents.append([num_com, number_list[i]])
+                    db.add_dump_agent(send_to_dump(number_list[i], data))
+                else:
+                    await sent_coor_list(data)
+                    db.add_dump_agent(send_to_dump(number_list[i], data))
+                    writing_table_task_progress(data, 1)
     if len(list_for_defective_agents) != 0:
         await storage_defective_agents(list_for_defective_agents)
         list_for_defective_agents.clear()

@@ -183,6 +183,12 @@ class DataBase:
         return self.execute(sql, parameters, fetchall=True)
 
 
+    def get_done_com_applications(self, date1):
+        parameters = (date1, )
+        sql = '''SELECT * FROM com_applications WHERE date_up>?'''
+        return self.execute(sql, parameters, fetchall=True)
+
+
     def get_user_access(self, **kwargs):
         sql = '''SELECT * FROM user_access WHERE '''
         sql, parameters = self.extract_kwargs(sql, kwargs)
