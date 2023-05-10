@@ -185,7 +185,7 @@ class DataBase:
 
     def get_done_com_applications(self, date1):
         parameters = (date1, )
-        sql = '''SELECT * FROM com_applications WHERE date_up>?'''
+        sql = '''SELECT * FROM com_applications WHERE ?<=date_up'''
         return self.execute(sql, parameters, fetchall=True)
 
 

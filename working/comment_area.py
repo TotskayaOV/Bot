@@ -164,3 +164,16 @@ async def sent_coor_list(data):
         chat_id = my_adminset[y][1]
         text_mess = chat_text(data)
         await dp.bot.send_message(chat_id, text=text_mess, reply_markup=kb_coord_inline)
+
+async def sent_admin_list(text_mess: str, sticker_mess: str):
+    """
+    Функция для отправки сообщения админам и координаторам. Формирует список с id_user роль-координатор и объединяет
+    его с my_adminset. Циклом for проходит по id_user общего списка и отправляет сообщение сформировав строку через
+    chat_text(). К сообщению прикрепляется инлайн клавиатура kb_coord_inline.
+    :param data: словарь {'agent_name': '', 'phone_number': '', 'inn_number': '', 'role': '', 'company_name': ''}
+    """
+    my_adminset = db.get_user_access(user_role='admin')
+    for y in range(len(my_adminset)):
+        chat_id = my_adminset[y][1]
+        await dp.bot.send_message(chat_id, text=text_mess)
+        await dp.bot.send_sticker(chat_id=chat_id, sticker=sticker_mess)
