@@ -42,7 +42,7 @@ async def mes_start(message: Message, admin: bool):
                 else:
                     sleep_time += 30
             else:
-                if sleep_time == 180:
+                if 25200 < sleep_time >= 180:
                     call_admin('Всё окей 😉 Я пробился 😎 Работаем дальше 😇')
                     sleep_time = 60
                 elif sleep_time == 25200:
