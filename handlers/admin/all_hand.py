@@ -31,7 +31,7 @@ async def mes_start(message: Message, admin: bool):
                              r'CAACAgQAAxkBAAEI5edkWJ2fAhFPf2vRmUiQAuVGAQyMDgACSRgAAqbxcR7zOpD5Pmgbri8E',
                              r'CAACAgIAAxkBAAEI5etkWJ3n8ZAVEBC9pTkAAQMZW6GkVzgAAhkUAAIptdBJgyy8GPR_RBovBA',
                              r'CAACAgIAAxkBAAEI5e1kWJ32Owkq-EkmHFRB27dBhrXA3AACcBMAAgwPqEhaKHmNoUeobC8E',
-                             r'CAACAgIAAxkBAAEI5fNkWJ4nvTezSrnYYWAWc2UGo7Cc4AACayEAAlaMCEqA92FgyPLptC8E]']
+                             r'CAACAgIAAxkBAAEI5fNkWJ4nvTezSrnYYWAWc2UGo7Cc4AACayEAAlaMCEqA92FgyPLptC8E']
         while not restart:
             try:
                 await cheking_workbase()
