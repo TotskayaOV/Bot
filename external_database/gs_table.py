@@ -234,34 +234,3 @@ def writing_pivot_table(all_data: tuple):
             ]
         }
     ).execute()
-
-
-# writing_status(3, '3')
-
-# def status_change(index_num: int, speedsheet_id: str):
-#     index_num = 5
-#     row_num = "J" + str(index_num)
-#     writing_status(row_num)
-#     worksheet = service.spreadsheets().values().get(
-#         spreadsheetId=spreadsheet_id1,
-#         range='D:D',
-#         majorDimension='COLUMNS'
-#     ).execute()
-# # cell_list = worksheet.findall("Может работать")
-#     print(worksheet)
-
-# Запись в файл
-# values = service.spreadsheets().values().batchUpdate(
-#     spreadsheetId=spreadsheet_id1,
-#     body={
-#         "valueInputOption": "USER_ENTERED",
-#         "data": [
-#             {"range": "B3:C4",
-#              "majorDimension": "ROWS",
-#              "values": [["This is B3", "This is C3"], ["This is B4", "This is C4"]]},
-#             {"range": "D5:E6",
-#              "majorDimension": "COLUMNS",
-#              "values": [["This is D5", "This is D6"], ["This is E5", "=5+5"]]}
-# 	]
-#     }
-# ).execute()

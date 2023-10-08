@@ -5,7 +5,6 @@ from working import div_cancel_agent
 from .cb_parsing import callback_parsing
 
 
-# "text": "ФИО:Иванов Иван Иванович\nТелефон: 79163000079\nИНН:79199700600\nКомпания: Изилоджистик Мск"
 @dp.callback_query_handler(cancel_agent_div.filter(cancel_agent='cancel_agent'))
 async def cansel_div_agent(callback: CallbackQuery):
     agent_dict = callback_parsing(callback.message.text, callback.from_user.id)

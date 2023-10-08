@@ -19,6 +19,7 @@ async def delete_task_ca(message: Message, admin: bool):
         else:
             await message.answer('У вас нет доступа к этой функции')
 
+
 @dp.message_handler(state=DoneAgent.task_id)
 async def task_id_catch(message: Message, state: FSMContext):
             await state.update_data({'task_id': message.text})

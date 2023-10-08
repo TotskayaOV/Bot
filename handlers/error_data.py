@@ -5,7 +5,6 @@ from working import add_new_comment
 from .cb_parsing import callback_parsing
 
 
-# "text": "ФИО:Иванов Иван Иванович\nТелефон: 79163000079\nИНН:79199700600\nКомпания: Изилоджистик Мск"
 @dp.callback_query_handler(other_company.filter(verif='error_inn_data'))
 async def error_phone_agent(callback: CallbackQuery):
     temp_dict = callback_parsing(callback.message.text, callback.from_user.id)

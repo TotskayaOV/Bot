@@ -123,9 +123,7 @@ def send_to_dump(row_number: int, data: dict):
 
 async def sent_div_list(data, comment_string: str, kb_await):
     """
-    Функция для отправки сообщения админам и ДН. Формирует список с id_user роль-дивизионный_менеджер и объединяет
-    его с my_adminset. Циклом for проходит по id_user общего списка и отправляет сообщение сформировав строку через
-    chat_text(). К сообщению прикрепляется инлайн клавиатура kb_div_nd_inline.
+    Функция для отправки сообщения админам и ДН.
     :param data: словарь {'agent_name': '', 'phone_number': '', 'inn_number': '', 'role': '', 'company_name': ''}
     """
     my_adminset = db.get_user_access(user_role='admin')
